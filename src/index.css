@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, monospace;
+
+  --color-brand-blue: #002395;
+  --color-brand-black: #000000;
+  --color-brand-white: #ffffff;
+  --color-brand-gray-100: #f2f2f2;
+  --color-brand-gray-200: #eeeeee;
+  --color-brand-gray-300: #e5e5e5;
+  --color-brand-gray-400: #9ca3af;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-white text-brand-black antialiased font-sans;
+  }
+}
+
+@layer utilities {
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  .rotate-180-vertical {
+    transform: rotate(180deg);
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   MODO OSCURO
+   Cuando <html> tiene la clase "dark", redefinimos los colores
+   de la marca. Como toda la página usa estos nombres de color,
+   TODO se adapta solo sin tocar las páginas una por una.
+   ─────────────────────────────────────────────────────────────── */
+.dark {
+  --color-brand-blue: #5d7bff;      /* azul más brillante para que resalte en fondo oscuro */
+  --color-brand-black: #ededee;     /* lo que era negro (texto) ahora es claro */
+  --color-brand-white: #0b0b0d;     /* lo que era blanco (fondos) ahora es oscuro */
+  --color-brand-gray-100: #161618;  /* fondos gris claro → gris oscuro */
+  --color-brand-gray-200: #242428;  /* bordes suaves */
+  --color-brand-gray-300: #34343a;  /* bordes */
+  --color-brand-gray-400: #8a8a93;  /* texto tenue (se ve bien en claro y oscuro) */
+}
+
+/* Pequeña animación suave al cambiar de modo, y ajuste del navegador */
+html { color-scheme: light; }
+html.dark { color-scheme: dark; }
+body, body * {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
