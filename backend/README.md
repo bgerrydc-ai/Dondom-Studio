@@ -17,7 +17,7 @@ La página funciona hoy con puro frontend; esto es el plan para el futuro.
 | `/` (Inicio) | Lista de productos | `src/constants.ts` | `productos` |
 | `/tienda` | Productos + filtros por categoría | `src/constants.ts` (categorías en `Tienda.tsx`) | `productos` |
 | `/mocca` | Detalle, formato, cantidad → WhatsApp | `src/pages/Mocca.tsx` | `productos` + `variantes` |
-| `/contacto` | Nombre, correo, teléfono, comentario | Sin guardar (previsto: Google Sheets) | `mensajes_contacto` |
+| `/contacto` | Nombre, teléfono (opcional), comentario | No se guarda: abre la app de correo del visitante (`mailto:`) | `mensajes_contacto` |
 | `/quienes-somos` | Solo texto, no captura datos | — | — |
 
 ## Plan de conexión (cuando llegue el momento)

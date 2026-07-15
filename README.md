@@ -39,15 +39,21 @@ npm run dev        # abre http://localhost:3000
   https://ai.studio/apps/8349c893-4aa9-4360-959b-8ddf53b6ddbb
   Esa versión NO se actualiza sola con este repo. Pendiente: conectar a Vercel
   para deploy automático desde GitHub
-- 🔲 **Teléfono real** — el actual (+52 55 1234 5678) es FICTICIO, reemplazar en
-  `src/constants.ts` cuando Gerardo tenga número de negocio
+- ✅ **Teléfono real**: +52 999 552 2572 (en `src/constants.ts`) — sirve sobre todo
+  para contacto de proveedores
+- 🔲 **Mercado Pago (D2C)** — el botón "Comprar ahora" está preparado: cuando exista
+  el link de pago, pegarlo en `PAYMENTS.mercadoPagoLink` (`src/constants.ts`).
+  Mientras esté vacío, el botón cae a WhatsApp. Requiere: cuenta de Mercado Pago
+  + precio y tamaño definidos del producto. Futuro: PayPal y Stripe
 - 🔲 **Tamaño y precio del spray AR/01** — pendientes de definir (en `Mocca.tsx` dice
   "tamaño por definir" y el precio manda a WhatsApp)
 - 🔲 **Textos de Quiénes Somos** — misión/visión/valores actuales son PROVISIONALES,
   Gerardo enviará los oficiales
-- 🔲 **Formulario de contacto** — funciona en pantalla pero NO guarda datos aún.
-  Preparado para Google Sheets (constante `SHEET_URL` en `Contacto.tsx`) o
-  conectar a Supabase (mejor opción, ver plan en `backend/README.md`)
+- ✅ **Formulario de contacto** — funciona vía `mailto:`: al enviar se abre la app
+  de correo predeterminada del visitante con el mensaje redactado (nombre +
+  comentario obligatorios, teléfono opcional). Destinatario: `CONTACT.email` en
+  `src/constants.ts` = Dondommanagment@gmail.com (correo real del negocio).
+  Futuro: guardar también en Supabase (`mensajes_contacto`)
 
 ## Backend (futuro)
 

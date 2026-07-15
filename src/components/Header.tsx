@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
-
-const LINKS = [
-  { to: '/',             label: 'Inicio' },
-  { to: '/tienda',       label: 'Tienda' },
-  { to: '/contacto',     label: 'Contacto' },
-  { to: '/quienes-somos', label: 'Quiénes Somos' },
-];
+import { useLang } from '../i18n';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { lang, toggle, t } = useLang();
+
+  const LINKS = [
+    { to: '/',              label: t.nav.inicio },
+    { to: '/tienda',        label: t.nav.tienda },
+    { to: '/contacto',      label: t.nav.contacto },
+    { to: '/quienes-somos', label: t.nav.quienesSomos },
+  ];
 
   // ¿Está activo el modo oscuro? Lo leemos de la clase del <html>
   const [isDark, setIsDark] = useState(
@@ -40,8 +42,8 @@ export default function Header() {
           DONDOM STUDIO
         </NavLink>
 
-        {/* Lado derecho: navegación + interruptor de tema + menú móvil */}
-        <div className="flex items-center gap-8">
+        {/* Lado derecho: navegación + idioma + tema + menú móvil */}
+        <div className="flex items-center gap-6 md:gap-8">
           {/* Navegación desktop */}
           <nav className="hidden md:flex items-center gap-10">
             {LINKS.map((link) => (
@@ -61,6 +63,21 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
+
+          {/* Interruptor de idioma ES / EN */}
+          <button
+            onClick={toggle}
+            aria-label="Cambiar idioma / Change language"
+            className="font-mono text-[10px] tracking-widest border border-brand-gray-300 px-2.5 py-1.5 hover:border-brand-blue transition-colors"
+          >
+            <span className={lang === 'es' ? 'text-brand-blue font-bold' : 'text-brand-gray-400'}>
+              ES
+            </span>
+            <span className="text-brand-gray-400"> / </span>
+            <span className={lang === 'en' ? 'text-brand-blue font-bold' : 'text-brand-gray-400'}>
+              EN
+            </span>
+          </button>
 
           {/* Interruptor modo claro / oscuro */}
           <button

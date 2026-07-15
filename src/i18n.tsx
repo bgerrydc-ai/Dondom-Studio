@@ -1,0 +1,333 @@
+import { createContext, useContext, useState, ReactNode } from 'react';
+
+// ═══════════════════════════════════════════════════════════════════
+// SISTEMA DE IDIOMAS (ES / EN)
+// ═══════════════════════════════════════════════════════════════════
+// Todos los textos de la página viven aquí, en español e inglés.
+// Para editar un texto: búscalo aquí y cámbialo en los DOS idiomas.
+// Las páginas los usan así:  const { t } = useLang();  →  t.home.viewCollection
+// ═══════════════════════════════════════════════════════════════════
+
+export const translations = {
+  es: {
+    nav: {
+      inicio: 'Inicio',
+      tienda: 'Tienda',
+      contacto: 'Contacto',
+      quienesSomos: 'Quiénes Somos',
+    },
+    common: {
+      comingSoonName: 'PRÓXIMAMENTE',
+      comingSoon: 'Próximamente',
+      imageSoon: 'Imagen próximamente',
+      photoSoon: 'Foto próximamente',
+      viewProduct: 'Ver Producto',
+      view: 'Ver',
+      copyright: '© 2026 DONDOM STUDIO — Instrumentos de Aroma',
+    },
+    home: {
+      blurb1: 'Aromas diseñados para transformar ambientes con precisión.',
+      blurb2: 'Difusores avant-garde. Ingeniería de aroma para entornos que exigen distinción.',
+      viewCollection: 'Ver Colección',
+      instruments: 'Instrumentos',
+      ofScent: 'De Aroma',
+      collection: 'Colección',
+      catalog: 'Catálogo / Serie A',
+      scents: 'Aromas',
+      segment: 'Segmento 01',
+      forCompanies: 'Para empresas y marcas',
+      needScentL1: '¿Necesitas un aroma',
+      needScentL2: 'para tu marca?',
+      supplierText:
+        'Formulamos aromas personalizados para proveedores, hoteles, tiendas y marcas que quieren dejar huella.',
+      supplierCta: 'Contactar como proveedor',
+      labTexture: 'Laboratorio de Aroma // V.01',
+      about1: 'Un estudio de aroma creativo que opera en la intersección del diseño y la sensorialidad.',
+      about2: 'Ingeniamos experiencias olfativas que transforman ambientes con precisión y distinción.',
+      contact: 'Contacto',
+      footerTagline: 'DONDOM STUDIO — Instrumentos de Aroma',
+    },
+    tienda: {
+      title: 'Tienda',
+      catalog: 'Catálogo / Serie A',
+      filterTodos: 'Todos',
+      filterCafe: 'Café y Especias',
+      filterFlores: 'Flores',
+      filterMaderas: 'Maderas',
+      filterFrescos: 'Frescos',
+      availableSg: 'aroma disponible',
+      availablePl: 'aromas disponibles',
+      empty: 'No hay aromas en esta categoría aún — pronto habrá más.',
+    },
+    mocca: {
+      breadcrumb: 'Tienda / AR 01',
+      serie: 'Serie A',
+      format: 'Spray Aromático',
+      formatLabel: 'Formato',
+      collectionLabel: 'Colección',
+      serieYear: 'Serie A — 2026',
+      subtitle: 'AR 01 — Spray Aromático',
+      description:
+        'Notas de café tostado, chocolate y menta fresca. Un aroma que envuelve y persiste. Diseñado para espacios que buscan distinción.',
+      selectFormat: 'Selecciona formato',
+      spray: 'Spray',
+      sizeTbd: 'Tamaño por definir',
+      quantity: 'Cantidad',
+      price: 'Precio',
+      priceWhatsApp: 'Consultar disponibilidad via WhatsApp',
+      buyNow: 'Comprar ahora',
+      buyNowWhatsApp: 'Comprar ahora — WhatsApp',
+      securePay: 'Pago seguro procesado por Mercado Pago',
+      weContact: 'Te contactamos directamente para confirmar tu pedido',
+      moreScents: 'Ver más aromas',
+      imgAlt: 'AR/01 MOCCA — spray aromático, vista frontal',
+      waMessage:
+        'Hola DONDOM STUDIO! Me interesa comprar el spray aromático MOCCA. ¿Pueden darme el precio y disponibilidad? Cantidad: {qty}',
+    },
+    contacto: {
+      kicker: 'Escríbenos',
+      title: 'Contacto',
+      name: 'Nombre *',
+      namePh: 'Tu nombre',
+      phone: 'Teléfono (opcional)',
+      phonePh: '+52 00 0000 0000',
+      comment: 'Comentario *',
+      commentPh: '¿En qué podemos ayudarte?',
+      required: 'Por favor llena los campos obligatorios (Nombre y Comentario).',
+      send: 'Enviar mensaje',
+      mailNotice: 'Se abrirá tu aplicación de correo con el mensaje listo para enviar',
+      done: '¡Listo! Revisa tu app de correo y presiona enviar.',
+      notOpened: '¿No se abrió nada? Usa una de estas opciones:',
+      openGmail: 'Abrir en Gmail',
+      copyMsg: 'Copiar mensaje',
+      copied: '¡Copiado! ✓',
+      orWrite: 'O escríbenos directo a',
+      emailSubject: 'Mensaje de {nombre} — DONDOM STUDIO',
+      emailBody: 'Hola, mi nombre es {nombre}. {comentario}.{telefonoParte} Saludos.',
+      emailPhonePart: ' Mi número de teléfono es {telefono}.',
+      emailTo: 'Para',
+      emailSubjectLabel: 'Asunto',
+      whatsapp: 'WhatsApp',
+      email: 'Correo',
+      hours: 'Horario',
+      hoursValue: 'Lun – Vie / 9:00 – 18:00',
+      supplierQ: '¿Eres proveedor?',
+      supplierText: 'Formulamos aromas a medida para marcas, hoteles y comercios. Llámanos al {phone}.',
+      copyright: '© 2026 DONDOM STUDIO — Instrumentos de Aroma',
+    },
+    about: {
+      kicker: 'Nuestra historia',
+      titleL1: 'Quiénes',
+      titleL2: 'Somos',
+      intro:
+        'DonDom Studio es un estudio creativo dedicado al diseño y desarrollo de productos que transforman la vida cotidiana. Creamos objetos que combinan funcionalidad, diseño y cultura, desde prendas de vestir hasta artículos para el hogar, hospitalidad y estilo de vida. No estamos limitados por una categoría; nuestro trabajo consiste en imaginar, diseñar y lanzar productos que las personas quieran conservar, usar y coleccionar.',
+      philosophyLabel: '01 — Filosofía',
+      philosophyQuoteL1: '"No seguimos una industria.',
+      philosophyQuoteL2: 'Seguimos una visión."',
+      philosophySub: 'Si un producto puede diseñarse mejor, puede formar parte de DonDom Studio.',
+      missionLabel: '02 — Misión',
+      missionTitle: 'Misión',
+      mission1:
+        'Diseñar productos que las personas quieran incorporar a su vida por su calidad, funcionalidad y diseño, construyendo un universo creativo que trascienda cualquier categoría.',
+      mission2:
+        'No queremos ser "una marca de ropa" ni "una marca de aromatizantes". Queremos crear una marca capaz de diseñar cualquier objeto siempre que represente la filosofía de DonDom Studio.',
+      visionLabel: '03 — Visión',
+      visionTitle: 'Visión',
+      vision:
+        'Convertir a DonDom Studio en uno de los estudios creativos más reconocidos de México y, eventualmente, del mundo, desarrollando productos, colecciones y colaboraciones que definan una forma de vivir.',
+      phraseLabel: 'DonDom en una frase',
+      phrase:
+        '"Un estudio creativo que diseña objetos, espacios y experiencias para elevar la vida cotidiana mediante un diseño honesto, funcional y atemporal."',
+      location: 'DONDOM STUDIO — MÉXICO',
+      copyright: '© 2026 DONDOM STUDIO',
+    },
+    products: {
+      moccaDescription: 'Spray aromático de edición limitada. Notas de café, chocolate y menta fresca.',
+      placeholderDescription: 'Nuevo aroma en desarrollo.',
+    },
+  },
+
+  en: {
+    nav: {
+      inicio: 'Home',
+      tienda: 'Shop',
+      contacto: 'Contact',
+      quienesSomos: 'About Us',
+    },
+    common: {
+      comingSoonName: 'COMING SOON',
+      comingSoon: 'Coming soon',
+      imageSoon: 'Image coming soon',
+      photoSoon: 'Photo coming soon',
+      viewProduct: 'View Product',
+      view: 'View',
+      copyright: '© 2026 DONDOM STUDIO — Instruments of Scent',
+    },
+    home: {
+      blurb1: 'Scents designed to transform environments with precision.',
+      blurb2: 'Avant-garde diffusers. Scent engineering for environments that demand distinction.',
+      viewCollection: 'View Collection',
+      instruments: 'Instruments',
+      ofScent: 'Of Scent',
+      collection: 'Collection',
+      catalog: 'Catalog / Series A',
+      scents: 'Scents',
+      segment: 'Segment 01',
+      forCompanies: 'For companies and brands',
+      needScentL1: 'Need a scent',
+      needScentL2: 'for your brand?',
+      supplierText:
+        'We craft custom scents for suppliers, hotels, stores and brands that want to leave a mark.',
+      supplierCta: 'Contact us as a supplier',
+      labTexture: 'Scent Laboratory // V.01',
+      about1: 'A creative scent studio operating at the intersection of design and the senses.',
+      about2: 'We engineer olfactory experiences that transform environments with precision and distinction.',
+      contact: 'Contact',
+      footerTagline: 'DONDOM STUDIO — Instruments of Scent',
+    },
+    tienda: {
+      title: 'Shop',
+      catalog: 'Catalog / Series A',
+      filterTodos: 'All',
+      filterCafe: 'Coffee & Spices',
+      filterFlores: 'Flowers',
+      filterMaderas: 'Woods',
+      filterFrescos: 'Fresh',
+      availableSg: 'scent available',
+      availablePl: 'scents available',
+      empty: 'No scents in this category yet — more coming soon.',
+    },
+    mocca: {
+      breadcrumb: 'Shop / AR 01',
+      serie: 'Series A',
+      format: 'Aromatic Spray',
+      formatLabel: 'Format',
+      collectionLabel: 'Collection',
+      serieYear: 'Series A — 2026',
+      subtitle: 'AR 01 — Aromatic Spray',
+      description:
+        'Notes of roasted coffee, chocolate and fresh mint. A scent that envelops and lingers. Designed for spaces that seek distinction.',
+      selectFormat: 'Select format',
+      spray: 'Spray',
+      sizeTbd: 'Size to be defined',
+      quantity: 'Quantity',
+      price: 'Price',
+      priceWhatsApp: 'Check availability via WhatsApp',
+      buyNow: 'Buy now',
+      buyNowWhatsApp: 'Buy now — WhatsApp',
+      securePay: 'Secure payment processed by Mercado Pago',
+      weContact: "We'll contact you directly to confirm your order",
+      moreScents: 'See more scents',
+      imgAlt: 'AR/01 MOCCA — aromatic spray, front view',
+      waMessage:
+        "Hello DONDOM STUDIO! I'm interested in buying the MOCCA aromatic spray. Could you tell me the price and availability? Quantity: {qty}",
+    },
+    contacto: {
+      kicker: 'Write to us',
+      title: 'Contact',
+      name: 'Name *',
+      namePh: 'Your name',
+      phone: 'Phone (optional)',
+      phonePh: '+52 00 0000 0000',
+      comment: 'Comment *',
+      commentPh: 'How can we help you?',
+      required: 'Please fill in the required fields (Name and Comment).',
+      send: 'Send message',
+      mailNotice: 'Your email app will open with the message ready to send',
+      done: 'Done! Check your email app and press send.',
+      notOpened: "Nothing opened? Use one of these options:",
+      openGmail: 'Open in Gmail',
+      copyMsg: 'Copy message',
+      copied: 'Copied! ✓',
+      orWrite: 'Or write to us directly at',
+      emailSubject: 'Message from {nombre} — DONDOM STUDIO',
+      emailBody: 'Hello, my name is {nombre}. {comentario}.{telefonoParte} Best regards.',
+      emailPhonePart: ' My phone number is {telefono}.',
+      emailTo: 'To',
+      emailSubjectLabel: 'Subject',
+      whatsapp: 'WhatsApp',
+      email: 'Email',
+      hours: 'Hours',
+      hoursValue: 'Mon – Fri / 9:00 – 18:00',
+      supplierQ: 'Are you a supplier?',
+      supplierText: 'We craft custom scents for brands, hotels and businesses. Call us at {phone}.',
+      copyright: '© 2026 DONDOM STUDIO — Instruments of Scent',
+    },
+    about: {
+      kicker: 'Our story',
+      titleL1: 'About',
+      titleL2: 'Us',
+      intro:
+        'DonDom Studio is a creative studio dedicated to designing and developing products that transform everyday life. We create objects that combine functionality, design and culture — from apparel to items for the home, hospitality and lifestyle. We are not limited by any category; our work is to imagine, design and launch products people want to keep, use and collect.',
+      philosophyLabel: '01 — Philosophy',
+      philosophyQuoteL1: '"We don\'t follow an industry.',
+      philosophyQuoteL2: 'We follow a vision."',
+      philosophySub: 'If a product can be designed better, it can be part of DonDom Studio.',
+      missionLabel: '02 — Mission',
+      missionTitle: 'Mission',
+      mission1:
+        'To design products people want to bring into their lives for their quality, functionality and design, building a creative universe that transcends any category.',
+      mission2:
+        'We don\'t want to be "a clothing brand" or "a home fragrance brand". We want to create a brand capable of designing any object, as long as it represents the philosophy of DonDom Studio.',
+      visionLabel: '03 — Vision',
+      visionTitle: 'Vision',
+      vision:
+        'To make DonDom Studio one of the most recognized creative studios in Mexico — and eventually the world — developing products, collections and collaborations that define a way of living.',
+      phraseLabel: 'DonDom in one sentence',
+      phrase:
+        '"A creative studio that designs objects, spaces and experiences to elevate everyday life through honest, functional and timeless design."',
+      location: 'DONDOM STUDIO — MEXICO',
+      copyright: '© 2026 DONDOM STUDIO',
+    },
+    products: {
+      moccaDescription: 'Limited edition aromatic spray. Notes of coffee, chocolate and fresh mint.',
+      placeholderDescription: 'New scent in development.',
+    },
+  },
+} as const;
+
+export type Lang = 'es' | 'en';
+type Translations = (typeof translations)['es'];
+
+interface LangContextValue {
+  lang: Lang;
+  toggle: () => void;
+  t: Translations;
+}
+
+const LangContext = createContext<LangContextValue>({
+  lang: 'es',
+  toggle: () => {},
+  t: translations.es,
+});
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  // Español es el idioma predeterminado; se recuerda la elección del visitante
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      return localStorage.getItem('lang') === 'en' ? 'en' : 'es';
+    } catch {
+      return 'es';
+    }
+  });
+
+  const toggle = () => {
+    const next: Lang = lang === 'es' ? 'en' : 'es';
+    setLang(next);
+    try {
+      localStorage.setItem('lang', next);
+    } catch {
+      // sin localStorage (modo incógnito estricto): el idioma solo dura la visita
+    }
+  };
+
+  return (
+    <LangContext.Provider value={{ lang, toggle, t: translations[lang] }}>
+      {children}
+    </LangContext.Provider>
+  );
+}
+
+export function useLang() {
+  return useContext(LangContext);
+}

@@ -21,19 +21,30 @@ export const PRODUCTS: Product[] = [
     available: true,
   },
   {
+    // Espacio reservado para el siguiente aroma (aún no existe)
     id: "002",
     code: "AR 02",
-    name: "CYAN",
+    name: "PRÓXIMAMENTE",
     series: "Serie A",
-    slug: "cyan",
+    slug: "proximamente",
     image: "",
-    description: "Próximamente.",
+    description: "Nuevo aroma en desarrollo.",
     available: false,
   }
 ];
 
 export const CONTACT = {
-  phone: "+52 55 1234 5678",
-  whatsapp: "5215512345678",
-  email: "contacto@dondonstudio.com",
+  phone: "+52 999 552 2572",
+  whatsapp: "5219995522572", // formato para links de WhatsApp: 52 + 1 + número
+  email: "Dondommanagment@gmail.com",
+};
+
+// ─── PAGOS (D2C — venta directa al consumidor) ───
+// Mercado Pago: cuando Gerardo genere el "link de pago" en su panel de
+// Mercado Pago, se pega aquí y el botón "Comprar ahora" lo usará.
+// Mientras esté vacío (""), el botón usa WhatsApp como respaldo para no
+// perder ventas.
+export const PAYMENTS = {
+  mercadoPagoLink: "https://mpago.la/2QfH8Rr",
+  // Futuro: paypalLink: "", stripeLink: ""
 };
