@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, ShoppingBag } from 'lucide-react';
 import { useLang } from '../i18n';
+import { useCart } from '../cart';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { lang, toggle, t } = useLang();
+  const { count, open: openCart } = useCart();
 
   const LINKS = [
     { to: '/',              label: t.nav.inicio },
@@ -63,6 +65,20 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
+
+          {/* Carrito con contador */}
+          <button
+            onClick={openCart}
+            aria-label={t.cart.title}
+            className="relative p-1.5 hover:text-brand-blue transition-colors"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            {count > 0 && (
+              <span className="absolute -top-1 -right-1 bg-brand-blue text-white text-[8px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">
+                {count}
+              </span>
+            )}
+          </button>
 
           {/* Interruptor de idioma ES / EN */}
           <button

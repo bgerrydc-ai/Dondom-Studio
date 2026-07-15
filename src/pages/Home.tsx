@@ -122,7 +122,7 @@ export default function Home() {
           </section>
 
           {/* ── CATÁLOGO ── */}
-          <section id="catalogo" className="p-8 md:p-24 bg-brand-white">
+          <section id="catalogo" className="scroll-mt-24 p-8 md:p-24 bg-brand-white">
             <div className="max-w-6xl mx-auto">
               <div className="flex justify-between items-end mb-10 border-b border-brand-black pb-8">
                 <motion.h2
@@ -229,9 +229,10 @@ export default function Home() {
           </section>
 
           {/* ── FRANJA DE PROVEEDORES ── */}
-          <section className="bg-brand-black text-brand-white px-8 md:px-24 py-16 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-brand-gray-200">
+          {/* Esta sección es negra SIEMPRE (colores fijos, no cambian con el modo oscuro) */}
+          <section className="bg-black text-white px-8 md:px-24 py-16 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-brand-gray-200">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-3">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-3">
                 {t.home.forCompanies}
               </p>
               <h3 className="text-2xl md:text-3xl font-extrabold tracking-tighter leading-tight">
@@ -241,12 +242,12 @@ export default function Home() {
               </h3>
             </div>
             <div className="flex flex-col items-start md:items-end gap-4">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 max-w-xs text-left md:text-right">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 max-w-xs text-left md:text-right">
                 {t.home.supplierText}
               </p>
               <button
                 onClick={() => navigate('/contacto')}
-                className="inline-flex items-center gap-3 border border-brand-white text-brand-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-white hover:text-brand-black transition-colors"
+                className="inline-flex items-center gap-3 border border-white text-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-white hover:text-black transition-colors"
               >
                 {t.home.supplierCta}
                 <ArrowRight className="w-4 h-4" />
@@ -277,9 +278,9 @@ export default function Home() {
               </motion.div>
             </div>
 
-            {/* Panel derecho — texto */}
-            <div className="lg:w-1/2 bg-brand-black text-brand-white p-12 lg:p-24 flex flex-col justify-center relative">
-              <span className="absolute top-12 right-12 font-mono text-[10px] text-brand-gray-400 tracking-widest">
+            {/* Panel derecho — texto (negro SIEMPRE, colores fijos) */}
+            <div className="lg:w-1/2 bg-black text-white p-12 lg:p-24 flex flex-col justify-center relative">
+              <span className="absolute top-12 right-12 font-mono text-[10px] text-neutral-400 tracking-widest">
                 003
               </span>
               <div className="max-w-md">
@@ -293,16 +294,16 @@ export default function Home() {
                   STUDIO
                 </motion.h2>
 
-                <div className="space-y-6 font-mono text-xs uppercase tracking-widest leading-relaxed text-brand-gray-300">
+                <div className="space-y-6 font-mono text-xs uppercase tracking-widest leading-relaxed text-neutral-300">
                   <p>{t.home.about1}</p>
-                  <p className="text-brand-gray-400">{t.home.about2}</p>
+                  <p className="text-neutral-400">{t.home.about2}</p>
                 </div>
 
-                <div className="mt-20 pt-8 border-t border-brand-gray-400/20 flex justify-between items-center text-[10px] font-mono tracking-widest uppercase text-brand-gray-400">
+                <div className="mt-20 pt-8 border-t border-neutral-400/20 flex justify-between items-center text-[10px] font-mono tracking-widest uppercase text-neutral-400">
                   <span>© 2026 DONDOM STUDIO</span>
                   <a
                     href={`mailto:${CONTACT.email}`}
-                    className="hover:text-brand-white transition-colors"
+                    className="hover:text-white transition-colors"
                   >
                     {t.home.contact}
                   </a>

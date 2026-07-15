@@ -7,6 +7,8 @@ export interface Product {
   description: string;
   slug: string;
   available: boolean;
+  priceMXN: number;  // precio en pesos mexicanos
+  size: string;      // tamaño, ej. "250 ml"
 }
 
 export const PRODUCTS: Product[] = [
@@ -19,6 +21,8 @@ export const PRODUCTS: Product[] = [
     image: "/products/ar01-ingredientes.jpg",
     description: "Spray aromático de edición limitada. Notas de café, chocolate y menta fresca.",
     available: true,
+    priceMXN: 289,
+    size: "250 ml",
   },
   {
     // Espacio reservado para el siguiente aroma (aún no existe)
@@ -30,8 +34,18 @@ export const PRODUCTS: Product[] = [
     image: "",
     description: "Nuevo aroma en desarrollo.",
     available: false,
+    priceMXN: 0,
+    size: "",
   }
 ];
+
+// Formatea un número como precio en pesos mexicanos: 490 -> "$490.00"
+export function formatMXN(amount: number): string {
+  return "$" + amount.toLocaleString("es-MX", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
 export const CONTACT = {
   phone: "+52 999 552 2572",

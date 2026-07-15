@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Minus, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CONTACT, PAYMENTS } from '../constants';
+import { PRODUCTS, formatMXN } from '../constants';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
+import { useCart } from '../cart';
 
 // Foto del producto en página de detalles
 const PRODUCT_IMAGE = '/products/ar01-frente.jpg';
@@ -12,23 +13,19 @@ const PRODUCT_IMAGE = '/products/ar01-frente.jpg';
 export default function Mocca() {
   const navigate = useNavigate();
   const { t } = useLang();
+  const { add } = useCart();
+
+  // Este es el producto AR/01 MOCCA (viene de la lista central)
+  const product = PRODUCTS.find((p) => p.slug === 'mocca')!;
+
   const [selectedFormat, setSelectedFormat] = useState('spray-s');
   const [qty, setQty] = useState(1);
 
   const FORMATS = [
-    { id: 'spray-s', label: t.mocca.spray, size: t.mocca.sizeTbd },
+    { id: 'spray-s', label: t.mocca.spray, size: product.size },
   ];
 
-  const whatsappMsg = encodeURIComponent(
-    t.mocca.waMessage.replace('{qty}', String(qty)),
-  );
-  const whatsappUrl = `https://wa.me/${CONTACT.whatsapp}?text=${whatsappMsg}`;
-
-  // Compra directa (D2C): si ya hay link de Mercado Pago, el botón principal
-  // cobra directo. Si aún no, cae a WhatsApp para no perder la venta.
-  const hasDirectPay = Boolean(PAYMENTS.mercadoPagoLink);
-  const buyUrl = hasDirectPay ? PAYMENTS.mercadoPagoLink : whatsappUrl;
-  const buyLabel = hasDirectPay ? t.mocca.buyNow : t.mocca.buyNowWhatsApp;
+  const handleAdd = () => add(product, qty); // agrega y abre la ventanita del carrito
 
   return (
     <div className="min-h-screen bg-brand-white">
@@ -54,7 +51,6 @@ export default function Mocca() {
 
         <div className="max-w-[1200px] mx-auto px-8 py-10 md:py-14 flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
           {/* ── COLUMNA IZQUIERDA — imagen del producto ── */}
-          {/* Marco compacto que abraza la foto, sin paneles gigantes alrededor */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -73,11 +69,7 @@ export default function Mocca() {
 
             {/* La foto con su marco pegado */}
             <div className="border border-brand-gray-200 bg-white">
-              <img
-                src={PRODUCT_IMAGE}
-                alt={t.mocca.imgAlt}
-                className="w-full h-auto"
-              />
+              <img src={PRODUCT_IMAGE} alt={t.mocca.imgAlt} className="w-full h-auto" />
             </div>
 
             {/* Mini barra inferior con datos técnicos */}
@@ -179,8 +171,8 @@ export default function Mocca() {
                 <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.mocca.price}
                 </p>
-                <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 border border-dashed border-brand-gray-300 px-4 py-2 inline-block">
-                  {t.mocca.priceWhatsApp}
+                <p className="text-3xl font-extrabold tracking-tighter">
+                  {formatMXN(product.priceMXN)}
                 </p>
               </motion.div>
             </div>
@@ -192,20 +184,18 @@ export default function Mocca() {
               transition={{ delay: 0.4 }}
               className="flex flex-col gap-4"
             >
-              {/* Botón principal — compra directa (Mercado Pago cuando esté activo) */}
-              <a
-                href={buyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              {/* Botón principal — agregar al carrito */}
+              <button
+                onClick={handleAdd}
                 className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-5 hover:bg-brand-black hover:text-brand-white transition-colors group"
               >
-                <span>{buyLabel}</span>
+                <span>{t.cart.addToCart}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </button>
 
               {/* Nota bajo el botón */}
               <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
-                {hasDirectPay ? t.mocca.securePay : t.mocca.weContact}
+                {t.cart.freeShippingNote}
               </p>
 
               {/* Separador */}

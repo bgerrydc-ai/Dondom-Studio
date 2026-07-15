@@ -41,27 +41,37 @@ npm run dev        # abre http://localhost:3000
   para deploy automático desde GitHub
 - ✅ **Teléfono real**: +52 999 552 2572 (en `src/constants.ts`) — sirve sobre todo
   para contacto de proveedores
-- 🔲 **Mercado Pago (D2C)** — el botón "Comprar ahora" está preparado: cuando exista
-  el link de pago, pegarlo en `PAYMENTS.mercadoPagoLink` (`src/constants.ts`).
-  Mientras esté vacío, el botón cae a WhatsApp. Requiere: cuenta de Mercado Pago
-  + precio y tamaño definidos del producto. Futuro: PayPal y Stripe
-- 🔲 **Tamaño y precio del spray AR/01** — pendientes de definir (en `Mocca.tsx` dice
-  "tamaño por definir" y el precio manda a WhatsApp)
-- 🔲 **Textos de Quiénes Somos** — misión/visión/valores actuales son PROVISIONALES,
-  Gerardo enviará los oficiales
-- ✅ **Formulario de contacto** — funciona vía `mailto:`: al enviar se abre la app
-  de correo predeterminada del visitante con el mensaje redactado (nombre +
-  comentario obligatorios, teléfono opcional). Destinatario: `CONTACT.email` en
-  `src/constants.ts` = Dondommanagment@gmail.com (correo real del negocio).
-  Futuro: guardar también en Supabase (`mensajes_contacto`)
+- ✅ **Idiomas ES/EN** — sistema en `src/i18n.tsx` (diccionario completo, ES por
+  defecto, botón en header, se recuerda en localStorage, fade al cambiar)
+- ✅ **Carrito de compras** — `src/cart.tsx` (estado global + localStorage) y
+  `src/components/CartDrawer.tsx` (ventanita lateral estilo Le Labo). Icono con
+  contador en el header
+- ✅ **Producto AR/01 MOCCA**: spray 250 ml, **$289 MXN** (en `src/constants.ts`)
+- ✅ **BACKEND ACTIVO (Supabase)** — proyecto "Dondom Studio"
+  (atfxlrsufenzchkjbiwe.supabase.co). Conexión en `src/supabase.ts` con llave
+  publishable (pública, segura). Tablas creadas con `backend/setup-supabase.sql`
+  (productos, mensajes_contacto, pedidos, pedido_items + RLS + función crear_pedido)
+- ✅ **Formulario de contacto** — guarda en Supabase (`mensajes_contacto`); si la
+  base falla, respaldo vía mailto/Gmail/copiar. Ver mensajes en: Supabase →
+  Table Editor → mensajes_contacto
+- ✅ **Checkout con pedidos reales** — `/checkout`: datos de envío → crea pedido en
+  Supabase (función `crear_pedido`) → confirmación con número de pedido → botón de
+  pago con link de Mercado Pago (`PAYMENTS.mercadoPagoLink`). Ver pedidos en:
+  Supabase → Table Editor → pedidos / pedido_items
+- 🔲 **Textos de Quiénes Somos** — ya tienen el texto oficial de Gerardo (estudio
+  creativo multi-categoría)
+- 🔲 **Pago integrado real** — hoy el pago es un link fijo de Mercado Pago (no sabe
+  cantidades ni total). Futuro: integración Checkout Pro con backend para cobrar
+  el total exacto del pedido. Futuro: PayPal y Stripe
+- 🔲 **Aviso de nueva venta** — notificar a Gerardo (correo/WhatsApp) cuando entre
+  un pedido nuevo
 
-## Backend (futuro)
+## Backend (ACTIVO desde julio 2026)
 
-La página funciona 100% con frontend. El diseño completo del backend
-(tablas, plan de conexión por fases, decisiones) está en **`backend/`**:
-se decidió NO crear el proyecto de Supabase hasta que se vaya a conectar,
-porque los proyectos gratis se pausan sin uso. Cuando llegue el momento,
-`backend/schema.sql` se ejecuta tal cual y la base nace con el catálogo cargado.
+Supabase en producción. `backend/setup-supabase.sql` es el script ejecutado
+(re-ejecutable sin peligro). `backend/schema.sql` fue el plano original (histórico).
+Seguridad: RLS activo — el público solo lee productos, inserta mensajes y crea
+pedidos vía función. La llave secreta (service_role) NUNCA va en el código.
 
 ## Decisiones clave (para no repetir discusiones)
 
@@ -69,5 +79,7 @@ porque los proyectos gratis se pausan sin uso. Cuando llegue el momento,
 - La marca se escribe **DONDOM STUDIO** (mayúsculas)
 - Foto de ingredientes (menta/café) → portada y tienda; foto frontal → página de producto
 - Tarjetas de producto: proporción 4:5 con `object-cover` (ni cuadradas ni con marcos blancos)
-- Ventas iniciales por WhatsApp; e-commerce completo vendrá con el backend
+- Secciones negras (proveedores, panel DONDOM, cierre de Quiénes Somos) son negras
+  SIEMPRE (colores fijos), no se invierten en modo oscuro
+- Compra estilo Le Labo: agregar al carrito → ventanita lateral → checkout → pedido
 - Sección de proveedores en Home: DONDOM también formula aromas para otras marcas

@@ -101,21 +101,22 @@ export default function QuienesSomos() {
         </section>
 
         {/* ── DONDOM EN UNA FRASE ── */}
-        <section className="bg-brand-black text-brand-white px-8 md:px-16 py-20 md:py-28">
+        {/* Sección negra SIEMPRE (colores fijos, no cambian con el modo oscuro) */}
+        <section className="bg-black text-white px-8 md:px-16 py-20 md:py-28">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="max-w-4xl mx-auto text-center"
           >
-            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 block mb-10">
+            <span className="font-mono text-[9px] uppercase tracking-widest text-neutral-400 block mb-10">
               {t.about.phraseLabel}
             </span>
             <p className="text-2xl md:text-4xl font-extrabold tracking-tighter leading-tight">
               {t.about.phrase}
             </p>
-            <div className="mt-12 pt-8 border-t border-brand-gray-400/20 inline-block">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+            <div className="mt-12 pt-8 border-t border-neutral-400/20 inline-block">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
                 {t.about.location}
               </span>
             </div>

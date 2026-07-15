@@ -71,7 +71,7 @@ export const translations = {
         'Notas de café tostado, chocolate y menta fresca. Un aroma que envuelve y persiste. Diseñado para espacios que buscan distinción.',
       selectFormat: 'Selecciona formato',
       spray: 'Spray',
-      sizeTbd: 'Tamaño por definir',
+      sizeTbd: '250 ml',
       quantity: 'Cantidad',
       price: 'Precio',
       priceWhatsApp: 'Consultar disponibilidad via WhatsApp',
@@ -95,7 +95,10 @@ export const translations = {
       commentPh: '¿En qué podemos ayudarte?',
       required: 'Por favor llena los campos obligatorios (Nombre y Comentario).',
       send: 'Enviar mensaje',
-      mailNotice: 'Se abrirá tu aplicación de correo con el mensaje listo para enviar',
+      sending: 'Enviando…',
+      sent: '¡Mensaje enviado! Te responderemos pronto.',
+      sendAnother: 'Enviar otro mensaje',
+      mailNotice: 'Tu mensaje se envía directamente a nuestro equipo',
       done: '¡Listo! Revisa tu app de correo y presiona enviar.',
       notOpened: '¿No se abrió nada? Usa una de estas opciones:',
       openGmail: 'Abrir en Gmail',
@@ -144,6 +147,42 @@ export const translations = {
     products: {
       moccaDescription: 'Spray aromático de edición limitada. Notas de café, chocolate y menta fresca.',
       placeholderDescription: 'Nuevo aroma en desarrollo.',
+    },
+    cart: {
+      title: 'Mi carrito',
+      close: 'Cerrar',
+      empty: 'Tu carrito está vacío',
+      continueShopping: 'Seguir comprando',
+      subtotal: 'Subtotal',
+      checkout: 'Pagar',
+      addToCart: 'Agregar al carrito',
+      remove: 'Quitar',
+      freeShippingNote: 'Envío gratis en compras mayores a $1,500',
+    },
+    checkout: {
+      title: 'Finalizar compra',
+      summary: 'Resumen del pedido',
+      subtotal: 'Subtotal',
+      empty: 'Tu carrito está vacío.',
+      goShop: 'Ir a la tienda',
+      shipping: 'Datos de envío',
+      name: 'Nombre completo *',
+      namePh: 'Tu nombre',
+      email: 'Correo electrónico *',
+      emailPh: 'tu@correo.com',
+      phone: 'Teléfono *',
+      phonePh: '+52 00 0000 0000',
+      address: 'Dirección de envío *',
+      addressPh: 'Calle, número, colonia, C.P., ciudad y estado',
+      required: 'Por favor llena todos los campos obligatorios.',
+      placeOrder: 'Realizar pedido',
+      placing: 'Procesando…',
+      orderOk: '¡Pedido recibido!',
+      orderNum: 'Número de pedido',
+      orderNote: 'Guarda tu número de pedido. Te contactaremos para confirmar la entrega.',
+      payNow: 'Pagar ahora — Mercado Pago',
+      orderError: 'Hubo un error al crear el pedido. Intenta de nuevo o escríbenos por WhatsApp.',
+      backHome: 'Volver al inicio',
     },
   },
 
@@ -209,7 +248,7 @@ export const translations = {
         'Notes of roasted coffee, chocolate and fresh mint. A scent that envelops and lingers. Designed for spaces that seek distinction.',
       selectFormat: 'Select format',
       spray: 'Spray',
-      sizeTbd: 'Size to be defined',
+      sizeTbd: '250 ml',
       quantity: 'Quantity',
       price: 'Price',
       priceWhatsApp: 'Check availability via WhatsApp',
@@ -233,7 +272,10 @@ export const translations = {
       commentPh: 'How can we help you?',
       required: 'Please fill in the required fields (Name and Comment).',
       send: 'Send message',
-      mailNotice: 'Your email app will open with the message ready to send',
+      sending: 'Sending…',
+      sent: 'Message sent! We will get back to you soon.',
+      sendAnother: 'Send another message',
+      mailNotice: 'Your message goes directly to our team',
       done: 'Done! Check your email app and press send.',
       notOpened: "Nothing opened? Use one of these options:",
       openGmail: 'Open in Gmail',
@@ -283,6 +325,42 @@ export const translations = {
       moccaDescription: 'Limited edition aromatic spray. Notes of coffee, chocolate and fresh mint.',
       placeholderDescription: 'New scent in development.',
     },
+    cart: {
+      title: 'My cart',
+      close: 'Close',
+      empty: 'Your cart is empty',
+      continueShopping: 'Continue shopping',
+      subtotal: 'Subtotal',
+      checkout: 'Checkout',
+      addToCart: 'Add to cart',
+      remove: 'Remove',
+      freeShippingNote: 'Free shipping on orders over $1,500',
+    },
+    checkout: {
+      title: 'Checkout',
+      summary: 'Order summary',
+      subtotal: 'Subtotal',
+      empty: 'Your cart is empty.',
+      goShop: 'Go to shop',
+      shipping: 'Shipping details',
+      name: 'Full name *',
+      namePh: 'Your name',
+      email: 'Email *',
+      emailPh: 'you@email.com',
+      phone: 'Phone *',
+      phonePh: '+52 00 0000 0000',
+      address: 'Shipping address *',
+      addressPh: 'Street, number, neighborhood, ZIP, city and state',
+      required: 'Please fill in all required fields.',
+      placeOrder: 'Place order',
+      placing: 'Processing…',
+      orderOk: 'Order received!',
+      orderNum: 'Order number',
+      orderNote: "Save your order number. We'll contact you to confirm delivery.",
+      payNow: 'Pay now — Mercado Pago',
+      orderError: 'There was an error creating your order. Try again or reach us on WhatsApp.',
+      backHome: 'Back to home',
+    },
   },
 } as const;
 
@@ -311,19 +389,39 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   });
 
+  // "fading" controla el fundido suave al cambiar de idioma
+  const [fading, setFading] = useState(false);
+
   const toggle = () => {
     const next: Lang = lang === 'es' ? 'en' : 'es';
-    setLang(next);
-    try {
-      localStorage.setItem('lang', next);
-    } catch {
-      // sin localStorage (modo incógnito estricto): el idioma solo dura la visita
-    }
+
+    // 1) La página se desvanece (fade out)
+    setFading(true);
+
+    // 2) A mitad del fundido, cambiamos el idioma mientras está invisible
+    //    y volvemos a aparecer (fade in). El tiempo coincide con la
+    //    transición CSS de abajo (250 ms).
+    window.setTimeout(() => {
+      setLang(next);
+      try {
+        localStorage.setItem('lang', next);
+      } catch {
+        // sin localStorage (modo incógnito estricto): el idioma solo dura la visita
+      }
+      setFading(false);
+    }, 250);
   };
 
   return (
     <LangContext.Provider value={{ lang, toggle, t: translations[lang] }}>
-      {children}
+      <div
+        style={{
+          transition: 'opacity 0.25s ease',
+          opacity: fading ? 0 : 1,
+        }}
+      >
+        {children}
+      </div>
     </LangContext.Provider>
   );
 }

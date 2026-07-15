@@ -4,6 +4,7 @@ import { ArrowRight, Mail } from 'lucide-react';
 import Header from '../components/Header';
 import { CONTACT } from '../constants';
 import { useLang } from '../i18n';
+import { supabase } from '../supabase';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CÓMO FUNCIONA ESTE FORMULARIO:
@@ -24,8 +25,10 @@ const EMPTY: FormData = { nombre: '', telefono: '', comentario: '' };
 export default function Contacto() {
   const { t } = useLang();
   const [form, setForm] = useState<FormData>(EMPTY);
-  const [opened, setOpened] = useState(false); // ya intentó enviar
-  const [copied, setCopied] = useState(false); // ya copió el mensaje
+  const [sending, setSending] = useState(false); // guardando en la base de datos
+  const [sent, setSent] = useState(false);       // guardado con éxito
+  const [opened, setOpened] = useState(false);   // plan B: opciones de correo
+  const [copied, setCopied] = useState(false);   // ya copió el mensaje
   const [errMsg, setErrMsg] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -46,7 +49,7 @@ export default function Contacto() {
   const mailtoUrl = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACT.email}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // Validación: nombre y comentario son obligatorios
@@ -55,9 +58,26 @@ export default function Contacto() {
       return;
     }
     setErrMsg('');
+    setSending(true);
 
-    // Mostramos primero las opciones de respaldo y luego intentamos abrir
-    // la app de correo predeterminada
+    // Camino principal: guardar el mensaje en la base de datos (Supabase)
+    const { error } = await supabase.from('mensajes_contacto').insert({
+      nombre: form.nombre.trim(),
+      telefono: form.telefono.trim() || null,
+      comentario: form.comentario.trim(),
+    });
+
+    setSending(false);
+
+    if (!error) {
+      // Guardado con éxito
+      setSent(true);
+      setOpened(false);
+      return;
+    }
+
+    // Plan B: si la base de datos falló (sin internet, etc.), ofrecemos
+    // las opciones de correo para que el mensaje no se pierda
     setOpened(true);
     try {
       window.location.href = mailtoUrl;
@@ -166,9 +186,10 @@ export default function Contacto() {
               {/* Submit */}
               <button
                 type="submit"
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
+                disabled={sending}
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
-                <span>{t.contacto.send}</span>
+                <span>{sending ? t.contacto.sending : t.contacto.send}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -177,6 +198,29 @@ export default function Contacto() {
                 <Mail className="w-3 h-3 shrink-0" />
                 {t.contacto.mailNotice}
               </p>
+
+              {/* Éxito: el mensaje quedó guardado en la base de datos */}
+              {sent && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="border border-brand-blue p-5 flex flex-col gap-4"
+                >
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                    {t.contacto.sent}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSent(false);
+                      setForm(EMPTY);
+                    }}
+                    className="self-start font-mono text-[9px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors"
+                  >
+                    {t.contacto.sendAnother}
+                  </button>
+                </motion.div>
+              )}
 
               {/* Confirmación + respaldos por si la app de correo no abrió */}
               {opened && (

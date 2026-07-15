@@ -47,7 +47,7 @@
 }
 
 /* Pequeña animación suave al cambiar de modo, y ajuste del navegador */
-html { color-scheme: light; }
+html { color-scheme: light; scroll-behavior: smooth; }
 html.dark { color-scheme: dark; }
 body, body * {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
