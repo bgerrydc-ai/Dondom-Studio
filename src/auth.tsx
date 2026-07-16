@@ -53,7 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string): Promise<SignUpResult> => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      // Si Supabase pide confirmar el correo, el enlace regresa al MISMO
+      // dominio desde donde se registró (tu sitio real, no localhost).
+      options: { emailRedirectTo: `${window.location.origin}/cuenta` },
+    });
     if (error) return { error: error.message, needsConfirm: false };
     // Si no hay sesión de inmediato, es porque Supabase pide confirmar el correo
     return { error: null, needsConfirm: !data.session };

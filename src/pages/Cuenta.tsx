@@ -244,7 +244,7 @@ function CuentaPrivada({
     let alive = true;
     (async () => {
       const [{ data: p }, { data: ped }] = await Promise.all([
-        supabase.from('perfiles').select('*').eq('id', user.id).single(),
+        supabase.from('perfiles').select('*').eq('id', user.id).maybeSingle(),
         supabase.from('pedidos').select('id,total_mxn,estado,creado_en').order('creado_en', { ascending: false }),
       ]);
       if (!alive) return;

@@ -87,7 +87,7 @@ export default function Checkout() {
         .from('perfiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       if (!alive) return;
       setForm((prev) => ({
         ...prev,
