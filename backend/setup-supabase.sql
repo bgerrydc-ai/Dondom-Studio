@@ -84,31 +84,54 @@ create policy "contacto insertar publico" on mensajes_contacto
 -- ─── 3. FUNCIÓN SEGURA PARA CREAR PEDIDOS ────────────────────────────
 -- El pedido y sus productos se crean juntos con esta función, sin exponer
 -- las tablas de pedidos a lectura pública.
+--
+-- SEGURIDAD: el navegador solo manda el CÓDIGO del producto y la CANTIDAD.
+-- El PRECIO y el TOTAL los calcula aquí el servidor, leyendo el precio real
+-- de la tabla `productos`. Así nadie puede pagar menos "editando" el precio
+-- desde su navegador.
+
+-- Quitamos la versión anterior de la función (que recibía el total desde
+-- el navegador) para reemplazarla por la nueva versión segura.
+drop function if exists crear_pedido(text, text, text, text, numeric, jsonb);
+drop function if exists crear_pedido(text, text, text, text, jsonb);
+
 create or replace function crear_pedido(
   p_nombre    text,
   p_correo    text,
   p_telefono  text,
   p_direccion text,
-  p_total     numeric,
-  p_items     jsonb
+  p_items     jsonb          -- [{ "codigo": "AR/01", "cantidad": 2 }, ...]
 ) returns uuid
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_id uuid;
+  v_id    uuid;
+  v_total numeric(10,2);
 begin
+  -- Total REAL: precio de la tabla `productos` × cantidad, solo productos
+  -- disponibles y con cantidad positiva.
+  select coalesce(sum(p.price_mxn * x.cantidad), 0)
+    into v_total
+  from jsonb_to_recordset(p_items) as x(codigo text, cantidad int)
+  join productos p on p.codigo = x.codigo
+  where p.disponible = true and x.cantidad > 0;
+
+  if v_total <= 0 then
+    raise exception 'El pedido no tiene productos válidos';
+  end if;
+
   insert into pedidos (nombre, correo, telefono, direccion, total_mxn)
-  values (p_nombre, p_correo, p_telefono, p_direccion, p_total)
+  values (p_nombre, p_correo, p_telefono, p_direccion, v_total)
   returning id into v_id;
 
+  -- Guardamos cada renglón con el precio real de la tabla (no el del navegador)
   insert into pedido_items (pedido_id, producto_codigo, nombre, size, precio_unitario_mxn, cantidad)
-  select v_id, x.producto_codigo, x.nombre, x.size, x.precio_unitario_mxn, x.cantidad
-  from jsonb_to_recordset(p_items) as x(
-    producto_codigo text, nombre text, size text,
-    precio_unitario_mxn numeric, cantidad int
-  );
+  select v_id, p.codigo, p.nombre, p.size, p.price_mxn, x.cantidad
+  from jsonb_to_recordset(p_items) as x(codigo text, cantidad int)
+  join productos p on p.codigo = x.codigo
+  where p.disponible = true and x.cantidad > 0;
 
   return v_id;
 end;
@@ -117,6 +140,7 @@ $$;
 grant execute on function crear_pedido to anon;
 
 -- ─── 4. DATOS INICIALES ──────────────────────────────────────────────
+-- Producto disponible: MOCCA (AR/01)
 insert into productos
   (codigo, nombre, slug, descripcion, categoria, serie, size, price_mxn, disponible, imagen_principal, imagen_detalle)
 values
@@ -124,4 +148,14 @@ values
    'Spray aromático de edición limitada. Notas de café, chocolate y menta fresca.',
    'cafe', 'Serie A', '250 ml', 289, true,
    '/products/ar01-ingredientes.jpg', '/products/ar01-frente.jpg')
+on conflict (codigo) do nothing;
+
+-- Espacio "Próximamente" (AR/02): aparece en el catálogo pero no se puede
+-- comprar (disponible = false). Cuando el aroma exista, solo edita esta
+-- fila en Supabase: ponle nombre, precio, fotos y disponible = true.
+insert into productos
+  (codigo, nombre, slug, descripcion, categoria, serie, size, price_mxn, disponible)
+values
+  ('AR/02', 'PRÓXIMAMENTE', 'proximamente',
+   'Nuevo aroma en desarrollo.', 'frescos', 'Serie A', '', 0, false)
 on conflict (codigo) do nothing;

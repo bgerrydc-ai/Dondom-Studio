@@ -2,24 +2,40 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Minus, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PRODUCTS, formatMXN } from '../constants';
+import { formatMXN } from '../constants';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useCart } from '../cart';
+import { useProducts } from '../products';
 
-// Foto del producto en página de detalles
+// Foto de respaldo para la página de detalles (si la base no trae imagen)
 const PRODUCT_IMAGE = '/products/ar01-frente.jpg';
 
 export default function Mocca() {
   const navigate = useNavigate();
   const { t } = useLang();
   const { add } = useCart();
+  const { products, loading } = useProducts();
 
-  // Este es el producto AR/01 MOCCA (viene de la lista central)
-  const product = PRODUCTS.find((p) => p.slug === 'mocca')!;
+  // Este es el producto AR/01 MOCCA (viene de Supabase)
+  const product = products.find((p) => p.slug === 'mocca');
 
   const [selectedFormat, setSelectedFormat] = useState('spray-s');
   const [qty, setQty] = useState(1);
+
+  // Si el producto todavía no está (cargando o no existe), mostramos un aviso
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-brand-white">
+        <Header />
+        <main className="max-w-[1200px] mx-auto px-8 py-24 text-center">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+            {loading ? t.common.loading : t.mocca.notFound}
+          </p>
+        </main>
+      </div>
+    );
+  }
 
   const FORMATS = [
     { id: 'spray-s', label: t.mocca.spray, size: product.size },
@@ -69,7 +85,7 @@ export default function Mocca() {
 
             {/* La foto con su marco pegado */}
             <div className="border border-brand-gray-200 bg-white">
-              <img src={PRODUCT_IMAGE} alt={t.mocca.imgAlt} className="w-full h-auto" />
+              <img src={product.imageDetail || PRODUCT_IMAGE} alt={t.mocca.imgAlt} className="w-full h-auto" />
             </div>
 
             {/* Mini barra inferior con datos técnicos */}

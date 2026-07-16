@@ -23,6 +23,7 @@ export const translations = {
       photoSoon: 'Foto próximamente',
       viewProduct: 'Ver Producto',
       view: 'Ver',
+      loading: 'Cargando…',
       copyright: '© 2026 DONDOM STUDIO — Instrumentos de Aroma',
     },
     home: {
@@ -80,6 +81,7 @@ export const translations = {
       securePay: 'Pago seguro procesado por Mercado Pago',
       weContact: 'Te contactamos directamente para confirmar tu pedido',
       moreScents: 'Ver más aromas',
+      notFound: 'Producto no encontrado',
       imgAlt: 'AR/01 MOCCA — spray aromático, vista frontal',
       waMessage:
         'Hola DONDOM STUDIO! Me interesa comprar el spray aromático MOCCA. ¿Pueden darme el precio y disponibilidad? Cantidad: {qty}',
@@ -209,6 +211,7 @@ export const translations = {
       photoSoon: 'Photo coming soon',
       viewProduct: 'View Product',
       view: 'View',
+      loading: 'Loading…',
       copyright: '© 2026 DONDOM STUDIO — Instruments of Scent',
     },
     home: {
@@ -266,6 +269,7 @@ export const translations = {
       securePay: 'Secure payment processed by Mercado Pago',
       weContact: "We'll contact you directly to confirm your order",
       moreScents: 'See more scents',
+      notFound: 'Product not found',
       imgAlt: 'AR/01 MOCCA — aromatic spray, front view',
       waMessage:
         "Hello DONDOM STUDIO! I'm interested in buying the MOCCA aromatic spray. Could you tell me the price and availability? Quantity: {qty}",

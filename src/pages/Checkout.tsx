@@ -104,18 +104,18 @@ export default function Checkout() {
       `${form.municipio.trim()}, ${form.ciudad.trim()}, ${form.estado.trim()}` +
       `${form.notas.trim() ? ' — Notas: ' + form.notas.trim() : ''}`;
 
-    // Creamos el pedido en la base de datos con la función segura crear_pedido
+    // Creamos el pedido con la función segura crear_pedido.
+    // IMPORTANTE: solo mandamos el código del producto y la cantidad.
+    // El PRECIO y el TOTAL los calcula el servidor (Supabase) con los
+    // precios reales de la tabla `productos`, para que nadie pueda pagar
+    // menos "editando" el precio desde su navegador.
     const { data, error } = await supabase.rpc('crear_pedido', {
       p_nombre: nombre,
       p_correo: form.correo.trim(),
       p_telefono: form.telefono.trim(),
       p_direccion: direccion,
-      p_total: subtotalMXN,
       p_items: items.map((i) => ({
-        producto_codigo: i.code,
-        nombre: i.name,
-        size: i.size,
-        precio_unitario_mxn: i.priceMXN,
+        codigo: i.code,
         cantidad: i.qty,
       })),
     });

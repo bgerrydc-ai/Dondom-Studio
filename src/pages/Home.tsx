@@ -1,13 +1,15 @@
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PRODUCTS, CONTACT } from '../constants';
+import { CONTACT } from '../constants';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
+import { useProducts } from '../products';
 
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useLang();
+  const { products } = useProducts();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -157,7 +159,7 @@ export default function Home() {
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
-                {PRODUCTS.map((product, idx) => (
+                {products.map((product, idx) => (
                   <motion.div
                     key={product.id}
                     initial={{ opacity: 0, y: 30 }}
@@ -170,7 +172,7 @@ export default function Home() {
                     {/* Imagen del producto */}
                     <div className="aspect-[4/5] relative overflow-hidden bg-brand-gray-100 border border-brand-gray-200 mb-8 flex items-center justify-center">
                       <div className="absolute top-6 left-6 z-10 text-[10px] font-mono text-neutral-400 font-bold uppercase tracking-widest">
-                        {product.id}
+                        {product.num}
                       </div>
 
                       {/* Placeholder visual cuando no hay imagen */}

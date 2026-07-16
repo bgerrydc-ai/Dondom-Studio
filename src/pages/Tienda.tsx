@@ -3,18 +3,13 @@ import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { PRODUCTS } from '../constants';
 import { useLang } from '../i18n';
-
-// Etiqueta de categoría por producto (para el filtro)
-const CATEGORIAS: Record<string, string> = {
-  '001': 'cafe',
-  '002': 'frescos',
-};
+import { useProducts } from '../products';
 
 export default function Tienda() {
   const navigate = useNavigate();
   const { t } = useLang();
+  const { products } = useProducts();
   const [filtro, setFiltro] = useState('todos');
 
   const FILTROS = [
@@ -29,11 +24,11 @@ export default function Tienda() {
   const descripcion = (slug: string) =>
     slug === 'mocca' ? t.products.moccaDescription : t.products.placeholderDescription;
 
-  const productosFiltrados = PRODUCTS.filter(
-    (p) => filtro === 'todos' || CATEGORIAS[p.id] === filtro,
+  const productosFiltrados = products.filter(
+    (p) => filtro === 'todos' || p.categoria === filtro,
   );
 
-  const disponibles = PRODUCTS.filter((p) => p.available).length;
+  const disponibles = products.filter((p) => p.available).length;
 
   return (
     <div className="min-h-screen bg-brand-white">
@@ -96,7 +91,7 @@ export default function Tienda() {
                 {/* Imagen / placeholder */}
                 <div className="aspect-[4/5] bg-brand-gray-100 border border-brand-gray-200 relative flex items-center justify-center mb-5 overflow-hidden">
                   <span className="absolute top-4 left-4 z-10 font-mono text-[9px] uppercase tracking-widest text-neutral-400">
-                    {product.id}
+                    {product.num}
                   </span>
 
                   {product.image ? (

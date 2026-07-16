@@ -1,25 +1,36 @@
 export interface Product {
-  id: string;
-  code: string;
+  id: string;          // identificador único (uuid de Supabase)
+  num: string;         // número visible en la tarjeta, ej. "001"
+  code: string;        // "AR/01"
   name: string;
   series: string;
-  image: string;
+  image: string;       // foto principal (tarjetas de catálogo/tienda)
+  imageDetail: string; // foto de la página de producto
   description: string;
-  slug: string;
+  slug: string;        // para la URL, ej. "mocca"
+  categoria: string;   // "cafe", "flores"... (para los filtros de la tienda)
   available: boolean;
-  priceMXN: number;  // precio en pesos mexicanos
-  size: string;      // tamaño, ej. "250 ml"
+  priceMXN: number;    // precio en pesos mexicanos
+  size: string;        // tamaño, ej. "250 ml"
 }
 
-export const PRODUCTS: Product[] = [
+// ─── LISTA DE RESPALDO ───────────────────────────────────────────────
+// La página normalmente carga los productos y precios DESDE SUPABASE
+// (tabla `productos`) — ver src/products.tsx. Esta lista solo se usa si
+// la base de datos no responde, para que la tienda nunca se vea vacía.
+// Para cambiar precios o agregar productos, hazlo en Supabase, no aquí.
+export const PRODUCTS_FALLBACK: Product[] = [
   {
     id: "001",
-    code: "AR 01",
+    num: "001",
+    code: "AR/01",
     name: "MOCCA",
     series: "Serie A",
     slug: "mocca",
     image: "/products/ar01-ingredientes.jpg",
+    imageDetail: "/products/ar01-frente.jpg",
     description: "Spray aromático de edición limitada. Notas de café, chocolate y menta fresca.",
+    categoria: "cafe",
     available: true,
     priceMXN: 289,
     size: "250 ml",
@@ -27,12 +38,15 @@ export const PRODUCTS: Product[] = [
   {
     // Espacio reservado para el siguiente aroma (aún no existe)
     id: "002",
-    code: "AR 02",
+    num: "002",
+    code: "AR/02",
     name: "PRÓXIMAMENTE",
     series: "Serie A",
     slug: "proximamente",
     image: "",
+    imageDetail: "",
     description: "Nuevo aroma en desarrollo.",
+    categoria: "frescos",
     available: false,
     priceMXN: 0,
     size: "",
