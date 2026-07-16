@@ -1,10 +1,11 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { useCart } from '../cart';
 import { useLang } from '../i18n';
+import { useAuth } from '../auth';
 import { formatMXN, PAYMENTS } from '../constants';
 import { supabase } from '../supabase';
 
@@ -69,11 +70,45 @@ export default function Checkout() {
   const { items, subtotalMXN, clear } = useCart();
   const navigate = useNavigate();
   const { t } = useLang();
+  const { user } = useAuth();
 
   const [form, setForm] = useState<ShippingData>(EMPTY);
   const [placing, setPlacing] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [errMsg, setErrMsg] = useState('');
+
+  // Si el cliente tiene sesión iniciada, llenamos el formulario con sus
+  // datos guardados (perfil) para que compre más rápido.
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    (async () => {
+      const { data: p } = await supabase
+        .from('perfiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (!alive) return;
+      setForm((prev) => ({
+        ...prev,
+        correo: prev.correo || user.email || '',
+        nombres: prev.nombres || p?.nombres || '',
+        apellidos: prev.apellidos || p?.apellidos || '',
+        telefono: prev.telefono || p?.telefono || '',
+        calle: prev.calle || p?.calle || '',
+        noExt: prev.noExt || p?.no_ext || '',
+        noInt: prev.noInt || p?.no_int || '',
+        cp: prev.cp || p?.cp || '',
+        colonia: prev.colonia || p?.colonia || '',
+        ciudad: prev.ciudad || p?.ciudad || '',
+        municipio: prev.municipio || p?.municipio || '',
+        estado: prev.estado || p?.estado || '',
+      }));
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [user]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

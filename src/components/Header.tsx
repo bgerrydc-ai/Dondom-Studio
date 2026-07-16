@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, Sun, Moon, ShoppingBag } from 'lucide-react';
+import { Menu, X, Sun, Moon, ShoppingBag, User } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useCart } from '../cart';
+import { useAuth } from '../auth';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { lang, toggle, t } = useLang();
   const { count, open: openCart } = useCart();
+  const { user } = useAuth();
 
   const LINKS = [
     { to: '/',              label: t.nav.inicio },
@@ -65,6 +67,23 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
+
+          {/* Mi cuenta */}
+          <NavLink
+            to="/cuenta"
+            aria-label={t.nav.cuenta}
+            className={({ isActive }) =>
+              `relative p-1.5 transition-colors ${
+                isActive ? 'text-brand-blue' : 'hover:text-brand-blue'
+              }`
+            }
+          >
+            <User className="w-4 h-4" />
+            {/* Punto azul si hay sesión iniciada */}
+            {user && (
+              <span className="absolute -top-0.5 -right-0.5 bg-brand-blue rounded-full w-2 h-2" />
+            )}
+          </NavLink>
 
           {/* Carrito con contador */}
           <button
