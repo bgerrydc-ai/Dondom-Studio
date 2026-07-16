@@ -9,13 +9,61 @@ import { formatMXN, PAYMENTS } from '../constants';
 import { supabase } from '../supabase';
 
 interface ShippingData {
-  nombre: string;
+  nombres: string;
+  apellidos: string;
   correo: string;
   telefono: string;
-  direccion: string;
+  calle: string;
+  noExt: string;
+  noInt: string;
+  cp: string;
+  colonia: string;
+  ciudad: string;
+  municipio: string;
+  estado: string;
+  notas: string;
 }
 
-const EMPTY: ShippingData = { nombre: '', correo: '', telefono: '', direccion: '' };
+const EMPTY: ShippingData = {
+  nombres: '', apellidos: '', correo: '', telefono: '',
+  calle: '', noExt: '', noInt: '', cp: '', colonia: '',
+  ciudad: '', municipio: '', estado: '', notas: '',
+};
+
+// Estilo compartido de las casillas
+const inputBase =
+  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+
+// Casilla reutilizable (definida FUERA del componente para no perder el foco al escribir)
+type FieldProps = {
+  label: string;
+  name: keyof ShippingData;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+  full?: boolean;
+};
+
+function Field({ label, name, value, onChange, placeholder, type = 'text', required = false, full = false }: FieldProps) {
+  return (
+    <div className={full ? 'sm:col-span-2' : ''}>
+      <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={inputBase}
+      />
+    </div>
+  );
+}
 
 export default function Checkout() {
   const { items, subtotalMXN, clear } = useCart();
@@ -23,8 +71,8 @@ export default function Checkout() {
   const { t } = useLang();
 
   const [form, setForm] = useState<ShippingData>(EMPTY);
-  const [placing, setPlacing] = useState(false);   // guardando el pedido
-  const [orderId, setOrderId] = useState('');      // número de pedido creado
+  const [placing, setPlacing] = useState(false);
+  const [orderId, setOrderId] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,19 +82,34 @@ export default function Checkout() {
   const handlePlaceOrder = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!form.nombre.trim() || !form.correo.trim() || !form.telefono.trim() || !form.direccion.trim()) {
+    // Campos obligatorios (todos menos No. Interior y Notas)
+    const requeridos = [
+      form.nombres, form.apellidos, form.correo, form.telefono,
+      form.calle, form.noExt, form.cp, form.colonia,
+      form.ciudad, form.municipio, form.estado,
+    ];
+    if (requeridos.some((v) => !v.trim())) {
       setErrMsg(t.checkout.required);
       return;
     }
     setErrMsg('');
     setPlacing(true);
 
+    // Armamos el nombre completo y la dirección en una línea legible
+    const nombre = `${form.nombres.trim()} ${form.apellidos.trim()}`;
+    const direccion =
+      `${form.calle.trim()} ${form.noExt.trim()}` +
+      `${form.noInt.trim() ? ' Int. ' + form.noInt.trim() : ''}, ` +
+      `Col. ${form.colonia.trim()}, C.P. ${form.cp.trim()}, ` +
+      `${form.municipio.trim()}, ${form.ciudad.trim()}, ${form.estado.trim()}` +
+      `${form.notas.trim() ? ' — Notas: ' + form.notas.trim() : ''}`;
+
     // Creamos el pedido en la base de datos con la función segura crear_pedido
     const { data, error } = await supabase.rpc('crear_pedido', {
-      p_nombre: form.nombre.trim(),
+      p_nombre: nombre,
       p_correo: form.correo.trim(),
       p_telefono: form.telefono.trim(),
-      p_direccion: form.direccion.trim(),
+      p_direccion: direccion,
       p_total: subtotalMXN,
       p_items: items.map((i) => ({
         producto_codigo: i.code,
@@ -64,13 +127,9 @@ export default function Checkout() {
       return;
     }
 
-    // ¡Pedido creado! Mostramos la confirmación y vaciamos el carrito
     setOrderId(String(data));
     clear();
   };
-
-  const inputBase =
-    'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
 
   // ── Pantalla de confirmación (pedido creado) ──
   if (orderId) {
@@ -91,7 +150,6 @@ export default function Checkout() {
               <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
                 {t.checkout.orderNum}
               </p>
-              {/* Mostramos solo los primeros 8 caracteres: más fácil de leer y dictar */}
               <p className="font-mono text-lg font-bold tracking-widest uppercase">
                 {orderId.slice(0, 8)}
               </p>
@@ -100,7 +158,6 @@ export default function Checkout() {
               {t.checkout.orderNote}
             </p>
 
-            {/* Pago con Mercado Pago */}
             {PAYMENTS.mercadoPagoLink && (
               <a
                 href={PAYMENTS.mercadoPagoLink}
@@ -148,57 +205,56 @@ export default function Checkout() {
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-            {/* ── DATOS DE ENVÍO ── */}
+            {/* ── FORMULARIO ── */}
             <motion.form
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               onSubmit={handlePlaceOrder}
-              className="flex-1 flex flex-col gap-5 w-full"
+              className="flex-1 flex flex-col gap-10 w-full"
             >
-              <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3">
-                {t.checkout.shipping}
-              </h2>
-
+              {/* Sección 1: contacto */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                  {t.checkout.name}
-                </label>
-                <input
-                  type="text" name="nombre" placeholder={t.checkout.namePh}
-                  value={form.nombre} onChange={handleChange} className={inputBase} required
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                    {t.checkout.email}
-                  </label>
-                  <input
-                    type="email" name="correo" placeholder={t.checkout.emailPh}
-                    value={form.correo} onChange={handleChange} className={inputBase} required
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                    {t.checkout.phone}
-                  </label>
-                  <input
-                    type="tel" name="telefono" placeholder={t.checkout.phonePh}
-                    value={form.telefono} onChange={handleChange} className={inputBase} required
-                  />
+                <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+                  {t.checkout.contactSection}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label={t.checkout.firstName} name="nombres" value={form.nombres} onChange={handleChange} required />
+                  <Field label={t.checkout.lastName} name="apellidos" value={form.apellidos} onChange={handleChange} required />
+                  <Field label={t.checkout.email} name="correo" value={form.correo} onChange={handleChange} placeholder={t.checkout.emailPh} type="email" required />
+                  <Field label={t.checkout.phone} name="telefono" value={form.telefono} onChange={handleChange} placeholder={t.checkout.phonePh} type="tel" required />
                 </div>
               </div>
 
+              {/* Sección 2: dirección */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                  {t.checkout.address}
-                </label>
-                <textarea
-                  name="direccion" placeholder={t.checkout.addressPh} rows={3}
-                  value={form.direccion} onChange={handleChange}
-                  className={`${inputBase} resize-none`} required
-                />
+                <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+                  {t.checkout.addressSection}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label={t.checkout.street} name="calle" value={form.calle} onChange={handleChange} required full />
+                  <Field label={t.checkout.extNum} name="noExt" value={form.noExt} onChange={handleChange} required />
+                  <Field label={t.checkout.intNum} name="noInt" value={form.noInt} onChange={handleChange} />
+                  <Field label={t.checkout.zip} name="cp" value={form.cp} onChange={handleChange} required />
+                  <Field label={t.checkout.colonia} name="colonia" value={form.colonia} onChange={handleChange} required />
+                  <Field label={t.checkout.city} name="ciudad" value={form.ciudad} onChange={handleChange} required />
+                  <Field label={t.checkout.municipio} name="municipio" value={form.municipio} onChange={handleChange} required />
+                  <Field label={t.checkout.state} name="estado" value={form.estado} onChange={handleChange} required full />
+
+                  {/* Notas de entrega (casilla grande) */}
+                  <div className="sm:col-span-2">
+                    <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                      {t.checkout.notes}
+                    </label>
+                    <textarea
+                      name="notas"
+                      value={form.notas}
+                      onChange={handleChange}
+                      placeholder={t.checkout.notesPh}
+                      rows={2}
+                      className={`${inputBase} resize-none`}
+                    />
+                  </div>
+                </div>
               </div>
 
               {errMsg && (
@@ -222,7 +278,7 @@ export default function Checkout() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 }}
-              className="w-full lg:w-[380px] shrink-0"
+              className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-24"
             >
               <div className="border border-brand-gray-200">
                 <div className="px-5 py-3 border-b border-brand-gray-200 font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
