@@ -30,6 +30,10 @@ interface AuthValue {
   ) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  // Recuperación de contraseña:
+  resetPassword: (email: string) => Promise<{ error: string | null }>;
+  updatePassword: (password: string) => Promise<{ error: string | null }>;
+  isRecovery: boolean; // true cuando el usuario llegó por el enlace de recuperación
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -38,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isRecovery, setIsRecovery] = useState(false);
 
   useEffect(() => {
     // 1) ¿Ya había una sesión guardada de una visita anterior?
@@ -48,9 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     // 2) Escuchamos cambios (iniciar/cerrar sesión) para actualizar solos
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, sess) => {
       setSession(sess);
       setUser(sess?.user ?? null);
+      // Cuando el usuario abre el enlace de "recuperar contraseña", Supabase
+      // dispara este evento: entramos en modo recuperación para pedirle la nueva.
+      if (event === 'PASSWORD_RECOVERY') setIsRecovery(true);
     });
 
     return () => sub.subscription.unsubscribe();
@@ -90,8 +98,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  // Paso 1: enviar el correo con el enlace para restablecer la contraseña.
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/cuenta`,
+    });
+    return { error: error ? error.message : null };
+  };
+
+  // Paso 2: ya con el enlace abierto, guardar la nueva contraseña.
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (!error) setIsRecovery(false);
+    return { error: error ? error.message : null };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, loading, signUp, signIn, signOut, resetPassword, updatePassword, isRecovery }}
+    >
       {children}
     </AuthContext.Provider>
   );

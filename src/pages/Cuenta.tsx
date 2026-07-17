@@ -61,10 +61,10 @@ interface Pedido {
 
 export default function Cuenta() {
   const { t, lang } = useLang();
-  const { user, loading, signUp, signIn, signOut } = useAuth();
+  const { user, loading, signUp, signIn, signOut, resetPassword, updatePassword, isRecovery } = useAuth();
 
-  // ── Formulario de acceso (registro / inicio de sesión) ──
-  const [modo, setModo] = useState<'login' | 'signup'>('login');
+  // ── Formulario de acceso (registro / inicio de sesión / recuperar) ──
+  const [modo, setModo] = useState<'login' | 'signup' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
@@ -72,6 +72,49 @@ export default function Cuenta() {
   const [authMsg, setAuthMsg] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
   const [confirmSent, setConfirmSent] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  // ── Nueva contraseña (cuando llega por el enlace de recuperación) ──
+  const [newPassword, setNewPassword] = useState('');
+  const [recoveryMsg, setRecoveryMsg] = useState('');
+  const [recoveryBusy, setRecoveryBusy] = useState(false);
+  const [recoveryDone, setRecoveryDone] = useState(false);
+
+  // Enviar el correo con el enlace para restablecer la contraseña
+  const handleReset = async (e: FormEvent) => {
+    e.preventDefault();
+    setAuthMsg('');
+    if (!email.trim()) {
+      setAuthMsg(t.cuenta.fillFields);
+      return;
+    }
+    setAuthBusy(true);
+    const { error } = await resetPassword(email.trim());
+    setAuthBusy(false);
+    if (error) {
+      setAuthMsg(error);
+      return;
+    }
+    setResetSent(true); // mostramos "revisa tu correo"
+  };
+
+  // Guardar la nueva contraseña
+  const handleNewPassword = async (e: FormEvent) => {
+    e.preventDefault();
+    setRecoveryMsg('');
+    if (newPassword.length < 6) {
+      setRecoveryMsg(t.cuenta.minPassword);
+      return;
+    }
+    setRecoveryBusy(true);
+    const { error } = await updatePassword(newPassword);
+    setRecoveryBusy(false);
+    if (error) {
+      setRecoveryMsg(error);
+      return;
+    }
+    setRecoveryDone(true); // isRecovery pasa a false → luego se ve la cuenta
+  };
 
   const handleAuth = async (e: FormEvent) => {
     e.preventDefault();
@@ -118,6 +161,126 @@ export default function Cuenta() {
           <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
             {t.common.loading}
           </p>
+        </main>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MODO RECUPERACIÓN → el usuario abrió el enlace del correo
+  // ═══════════════════════════════════════════════════════════════════
+  if (isRecovery && !recoveryDone) {
+    return (
+      <div className="min-h-screen bg-brand-white">
+        <Header />
+        <main className="max-w-[420px] mx-auto px-8 py-16">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
+            {t.cuenta.newPassTitle}
+          </h1>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+            {t.cuenta.newPassSub}
+          </p>
+          <form onSubmit={handleNewPassword} className="flex flex-col gap-5">
+            <div>
+              <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                {t.cuenta.newPassLabel}
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder={t.cuenta.passwordPh}
+                className={inputBase}
+                autoComplete="new-password"
+              />
+            </div>
+            {recoveryMsg && (
+              <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                {recoveryMsg}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={recoveryBusy}
+              className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+            >
+              <span>{recoveryBusy ? t.cuenta.processing : t.cuenta.newPassBtn}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </form>
+        </main>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // RECUPERAR CONTRASEÑA → pedir correo para enviar el enlace
+  // ═══════════════════════════════════════════════════════════════════
+  if (!user && modo === 'reset') {
+    return (
+      <div className="min-h-screen bg-brand-white">
+        <Header />
+        <main className="max-w-[420px] mx-auto px-8 py-16">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
+            {t.cuenta.resetTitle}
+          </h1>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+            {t.cuenta.resetSub}
+          </p>
+
+          {resetSent ? (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="border border-brand-blue p-6 flex flex-col items-center gap-4 text-center"
+            >
+              <CheckCircle className="w-10 h-10 text-brand-blue" />
+              <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+                {t.cuenta.resetSent}
+              </p>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleReset} className="flex flex-col gap-5">
+              <div>
+                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                  {t.cuenta.email}
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.cuenta.emailPh}
+                  className={inputBase}
+                  autoComplete="email"
+                />
+              </div>
+              {authMsg && (
+                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                  {authMsg}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={authBusy}
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+              >
+                <span>{authBusy ? t.cuenta.processing : t.cuenta.resetBtn}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </form>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setModo('login');
+              setAuthMsg('');
+              setResetSent(false);
+            }}
+            className="mt-6 font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+          >
+            ← {t.cuenta.backToLogin}
+          </button>
         </main>
       </div>
     );
@@ -244,6 +407,19 @@ export default function Cuenta() {
                   className={inputBase}
                   autoComplete={modo === 'signup' ? 'new-password' : 'current-password'}
                 />
+                {/* ¿Olvidaste tu contraseña? — solo al iniciar sesión */}
+                {modo === 'login' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModo('reset');
+                      setAuthMsg('');
+                    }}
+                    className="mt-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue hover:underline"
+                  >
+                    {t.cuenta.forgotLink}
+                  </button>
+                )}
               </div>
 
               {/* Consentimientos (solo al crear cuenta) */}
