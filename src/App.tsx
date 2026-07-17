@@ -11,6 +11,8 @@ import QuienesSomos from './pages/QuienesSomos';
 import Mocca        from './pages/Mocca';
 import Checkout     from './pages/Checkout';
 import Cuenta       from './pages/Cuenta';
+import Terminos     from './pages/Terminos';
+import Privacidad   from './pages/Privacidad';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
                 <Route path="/mocca"         element={<Mocca />} />
                 <Route path="/checkout"      element={<Checkout />} />
                 <Route path="/cuenta"        element={<Cuenta />} />
+                <Route path="/terminos"      element={<Terminos />} />
+                <Route path="/privacidad"    element={<Privacidad />} />
               </Routes>
               {/* La ventanita del carrito vive fuera de las rutas para que
                   esté disponible en todas las páginas */}

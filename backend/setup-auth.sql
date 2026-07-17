@@ -33,8 +33,17 @@ create table if not exists perfiles (
   municipio  text,
   estado     text,
   rol        text default 'cliente',   -- 'cliente' | 'admin' (para el futuro)
+  acepto_terminos  boolean default false, -- aceptó términos y privacidad al registrarse
+  terminos_fecha   timestamptz,           -- cuándo los aceptó (registro legal)
+  acepta_marketing boolean default false, -- quiere recibir correos de novedades
   creado_en  timestamptz default now()
 );
+
+-- Por si la tabla `perfiles` ya existía de una corrida anterior, agregamos
+-- las columnas nuevas sin borrar nada.
+alter table perfiles add column if not exists acepto_terminos  boolean default false;
+alter table perfiles add column if not exists terminos_fecha   timestamptz;
+alter table perfiles add column if not exists acepta_marketing boolean default false;
 
 alter table perfiles enable row level security;
 
@@ -52,15 +61,26 @@ create policy "perfil editar propio" on perfiles
   for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
 -- ─── 2. PERFIL AUTOMÁTICO AL REGISTRARSE ─────────────────────────────
--- Cuando alguien crea su cuenta, se crea su fila en `perfiles` sola.
+-- Cuando alguien crea su cuenta, se crea su fila en `perfiles` sola, y se
+-- guardan los consentimientos (términos y marketing) que aceptó al registrarse.
+-- Esos valores viajan en los "metadatos" del registro (raw_user_meta_data).
 create or replace function handle_new_user()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_terminos  boolean := coalesce((new.raw_user_meta_data->>'acepto_terminos')::boolean, false);
+  v_marketing boolean := coalesce((new.raw_user_meta_data->>'acepta_marketing')::boolean, false);
 begin
-  insert into perfiles (id) values (new.id)
+  insert into perfiles (id, acepto_terminos, terminos_fecha, acepta_marketing)
+  values (
+    new.id,
+    v_terminos,
+    case when v_terminos then now() else null end,
+    v_marketing
+  )
   on conflict (id) do nothing;
   return new;
 end;

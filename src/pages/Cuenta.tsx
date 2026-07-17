@@ -67,6 +67,8 @@ export default function Cuenta() {
   const [modo, setModo] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [aceptaMarketing, setAceptaMarketing] = useState(false);
   const [authMsg, setAuthMsg] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
   const [confirmSent, setConfirmSent] = useState(false);
@@ -82,9 +84,16 @@ export default function Cuenta() {
       setAuthMsg(t.cuenta.minPassword);
       return;
     }
+    if (modo === 'signup' && !aceptaTerminos) {
+      setAuthMsg(t.cuenta.mustAcceptTerms);
+      return;
+    }
     setAuthBusy(true);
     if (modo === 'signup') {
-      const { error, needsConfirm } = await signUp(email.trim(), password);
+      const { error, needsConfirm } = await signUp(email.trim(), password, {
+        acepta_marketing: aceptaMarketing,
+        acepto_terminos: aceptaTerminos,
+      });
       setAuthBusy(false);
       if (error) {
         setAuthMsg(error);
@@ -205,6 +214,55 @@ export default function Cuenta() {
                   autoComplete={modo === 'signup' ? 'new-password' : 'current-password'}
                 />
               </div>
+
+              {/* Consentimientos (solo al crear cuenta) */}
+              {modo === 'signup' && (
+                <div className="flex flex-col gap-4 pt-1">
+                  {/* Obligatorio: términos y privacidad */}
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={aceptaTerminos}
+                      onChange={(e) => setAceptaTerminos(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
+                    />
+                    <span className="font-mono text-[9px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+                      {t.cuenta.termsPre}{' '}
+                      <a
+                        href="/terminos"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-blue underline"
+                      >
+                        {t.cuenta.termsLink}
+                      </a>{' '}
+                      {t.cuenta.termsMid}{' '}
+                      <a
+                        href="/privacidad"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-blue underline"
+                      >
+                        {t.cuenta.privacyLink}
+                      </a>{' '}
+                      {t.cuenta.termsPost}
+                    </span>
+                  </label>
+
+                  {/* Opcional: marketing */}
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={aceptaMarketing}
+                      onChange={(e) => setAceptaMarketing(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
+                    />
+                    <span className="font-mono text-[9px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+                      {t.cuenta.marketingLabel}
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {authMsg && (
                 <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">

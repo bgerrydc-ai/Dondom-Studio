@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { CONTACT } from '../constants';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
@@ -316,13 +316,27 @@ export default function Home() {
         </main>
 
         {/* ── FOOTER ── */}
-        <footer className="p-8 border-t border-brand-gray-200 bg-brand-white flex flex-col md:flex-row justify-between items-center gap-2">
+        <footer className="p-8 border-t border-brand-gray-200 bg-brand-white flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
             {t.home.footerTagline}
           </p>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
-            {CONTACT.phone}
-          </p>
+          <div className="flex items-center gap-5">
+            <Link
+              to="/terminos"
+              className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+            >
+              {t.legal.terms}
+            </Link>
+            <Link
+              to="/privacidad"
+              className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+            >
+              {t.legal.privacy}
+            </Link>
+            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+              {CONTACT.phone}
+            </span>
+          </div>
         </footer>
       </motion.div>
     </div>

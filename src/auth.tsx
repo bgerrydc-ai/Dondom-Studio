@@ -23,7 +23,11 @@ interface AuthValue {
   user: User | null;
   session: Session | null;
   loading: boolean; // true mientras revisamos si ya había sesión
-  signUp: (email: string, password: string) => Promise<SignUpResult>;
+  signUp: (
+    email: string,
+    password: string,
+    extra?: { acepta_marketing: boolean; acepto_terminos: boolean },
+  ) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
@@ -52,13 +56,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string): Promise<SignUpResult> => {
+  const signUp = async (
+    email: string,
+    password: string,
+    extra?: { acepta_marketing: boolean; acepto_terminos: boolean },
+  ): Promise<SignUpResult> => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      // Si Supabase pide confirmar el correo, el enlace regresa al MISMO
-      // dominio desde donde se registró (tu sitio real, no localhost).
-      options: { emailRedirectTo: `${window.location.origin}/cuenta` },
+      options: {
+        // Si Supabase pide confirmar el correo, el enlace regresa al MISMO
+        // dominio desde donde se registró (tu sitio real, no localhost).
+        emailRedirectTo: `${window.location.origin}/cuenta`,
+        // Guardamos el consentimiento (términos y marketing) junto con el
+        // registro; el trigger de la base de datos lo pasa a `perfiles`.
+        data: {
+          acepta_marketing: extra?.acepta_marketing ?? false,
+          acepto_terminos: extra?.acepto_terminos ?? false,
+        },
+      },
     });
     if (error) return { error: error.message, needsConfirm: false };
     // Si no hay sesión de inmediato, es porque Supabase pide confirmar el correo
