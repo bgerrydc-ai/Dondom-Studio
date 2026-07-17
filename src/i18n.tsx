@@ -195,6 +195,13 @@ export const translations = {
       payNow: 'Pagar ahora — Mercado Pago',
       orderError: 'Hubo un error al crear el pedido. Intenta de nuevo o escríbenos por WhatsApp.',
       backHome: 'Volver al inicio',
+      payButton: 'Continuar al pago',
+      redirecting: 'Redirigiendo al pago seguro…',
+      payError: 'No se pudo iniciar el pago. Intenta de nuevo.',
+      payCanceled: 'Cancelaste el pago. Tu carrito sigue disponible.',
+      paidTitle: '¡Gracias por tu compra!',
+      paidNote: 'Recibimos tu pago. Te enviaremos la confirmación y seguimiento por correo.',
+      securePay: 'Pago seguro procesado por Stripe',
     },
     cuenta: {
       // Encabezados
@@ -471,6 +478,13 @@ export const translations = {
       payNow: 'Pay now — Mercado Pago',
       orderError: 'There was an error creating your order. Try again or reach us on WhatsApp.',
       backHome: 'Back to home',
+      payButton: 'Continue to payment',
+      redirecting: 'Redirecting to secure payment…',
+      payError: 'Payment could not be started. Please try again.',
+      payCanceled: 'You canceled the payment. Your cart is still here.',
+      paidTitle: 'Thank you for your purchase!',
+      paidNote: 'We received your payment. We will email you the confirmation and tracking.',
+      securePay: 'Secure payment processed by Stripe',
     },
     cuenta: {
       loginTitle: 'Sign in',

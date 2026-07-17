@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import { useCart } from '../cart';
 import { useLang } from '../i18n';
 import { useAuth } from '../auth';
-import { formatMXN, PAYMENTS } from '../constants';
+import { formatMXN } from '../constants';
 import { supabase } from '../supabase';
 
 interface ShippingData {
@@ -110,6 +110,20 @@ export default function Checkout() {
     };
   }, [user]);
 
+  // Al regresar de Stripe: ?pagado=<id> = pago exitoso · ?cancelado=1 = canceló
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pagado = params.get('pagado');
+    const cancelado = params.get('cancelado');
+    if (pagado !== null) {
+      setOrderId(pagado || 'ok');
+      clear(); // vaciamos el carrito, la compra se completó
+    } else if (cancelado) {
+      setErrMsg(t.checkout.payCanceled);
+    }
+    // Solo al cargar la página
+  }, []);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -155,15 +169,37 @@ export default function Checkout() {
       })),
     });
 
-    setPlacing(false);
-
     if (error || !data) {
+      setPlacing(false);
       setErrMsg(t.checkout.orderError);
       return;
     }
 
-    setOrderId(String(data));
-    clear();
+    const newOrderId = String(data);
+
+    // Creamos la sesión de pago en Stripe y mandamos al cliente a su página
+    // segura. El total lo vuelve a calcular el servidor con los precios reales.
+    try {
+      const resp = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map((i) => ({ codigo: i.code, cantidad: i.qty })),
+          orderId: newOrderId,
+          origin: window.location.origin,
+        }),
+      });
+      const json = await resp.json();
+      if (!resp.ok || !json.url) {
+        setPlacing(false);
+        setErrMsg(t.checkout.payError);
+        return;
+      }
+      window.location.href = json.url; // → página de pago de Stripe
+    } catch {
+      setPlacing(false);
+      setErrMsg(t.checkout.payError);
+    }
   };
 
   // ── Pantalla de confirmación (pedido creado) ──
@@ -179,31 +215,21 @@ export default function Checkout() {
           >
             <CheckCircle className="w-14 h-14 text-brand-blue" />
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">
-              {t.checkout.orderOk}
+              {t.checkout.paidTitle}
             </h1>
-            <div className="border border-brand-gray-200 px-6 py-4">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                {t.checkout.orderNum}
-              </p>
-              <p className="font-mono text-lg font-bold tracking-widest uppercase">
-                {orderId.slice(0, 8)}
-              </p>
-            </div>
-            <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-sm">
-              {t.checkout.orderNote}
-            </p>
-
-            {PAYMENTS.mercadoPagoLink && (
-              <a
-                href={PAYMENTS.mercadoPagoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
-              >
-                <span>{t.checkout.payNow}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+            {orderId && orderId !== 'ok' && (
+              <div className="border border-brand-gray-200 px-6 py-4">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                  {t.checkout.orderNum}
+                </p>
+                <p className="font-mono text-lg font-bold tracking-widest uppercase">
+                  {orderId.slice(0, 8)}
+                </p>
+              </div>
             )}
+            <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-sm">
+              {t.checkout.paidNote}
+            </p>
 
             <button
               onClick={() => navigate('/')}
@@ -303,9 +329,14 @@ export default function Checkout() {
                 disabled={placing}
                 className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
-                <span>{placing ? t.checkout.placing : t.checkout.placeOrder}</span>
+                <span>{placing ? t.checkout.redirecting : t.checkout.payButton}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
+
+              {/* Aviso de pago seguro */}
+              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+                {t.checkout.securePay}
+              </p>
             </motion.form>
 
             {/* ── RESUMEN DEL PEDIDO ── */}
