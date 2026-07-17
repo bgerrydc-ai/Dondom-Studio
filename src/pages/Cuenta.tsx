@@ -127,19 +127,17 @@ export default function Cuenta() {
   // SIN SESIÓN → formulario de acceso
   // ═══════════════════════════════════════════════════════════════════
   if (!user) {
+    const isSignup = modo === 'signup';
     return (
       <div className="min-h-screen bg-brand-white">
         <Header />
-        <main className="max-w-[440px] mx-auto px-8 py-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
-            {t.cuenta.accountTitle}
-          </h1>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8">
-            {t.cuenta.optionalNote}
-          </p>
-
+        <main
+          className={`mx-auto px-8 py-16 transition-all duration-300 ${
+            isSignup ? 'max-w-[560px]' : 'max-w-[420px]'
+          }`}
+        >
           {/* Pestañas grandes: Iniciar sesión / Crear cuenta */}
-          <div className="flex border border-brand-gray-300 mb-8">
+          <div className="flex border border-brand-gray-300 mb-10">
             <button
               type="button"
               onClick={() => {
@@ -162,13 +160,46 @@ export default function Cuenta() {
               }}
               className={`flex-1 font-mono text-[10px] uppercase tracking-widest py-4 transition-colors border-l border-brand-gray-300 ${
                 modo === 'signup'
-                  ? 'bg-brand-black text-brand-white'
+                  ? 'bg-brand-blue text-brand-white'
                   : 'text-brand-gray-400 hover:text-brand-black'
               }`}
             >
               {t.cuenta.signupTitle}
             </button>
           </div>
+
+          {/* Encabezado distinto según el modo */}
+          <motion.div key={modo + '-head'} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
+              {isSignup ? t.cuenta.signupHeading : t.cuenta.loginHeading}
+            </h1>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+              {isSignup ? t.cuenta.signupSub : t.cuenta.loginSub}
+            </p>
+          </motion.div>
+
+          {/* Panel de beneficios — SOLO al crear cuenta (lo hace más llamativo) */}
+          {isSignup && !confirmSent && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="border border-brand-blue bg-brand-blue/5 p-6 mb-8"
+            >
+              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-blue font-bold mb-4">
+                {t.cuenta.benefitsTitle}
+              </p>
+              <ul className="flex flex-col gap-3">
+                {[t.cuenta.benefit1, t.cuenta.benefit2, t.cuenta.benefit3].map((b) => (
+                  <li key={b} className="flex items-start gap-3">
+                    <CheckCircle className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+                      {b}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          )}
 
           {confirmSent ? (
             <motion.div
