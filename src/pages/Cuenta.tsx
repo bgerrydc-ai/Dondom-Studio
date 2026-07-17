@@ -1,7 +1,7 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, LogOut, CheckCircle } from 'lucide-react';
+import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useAuth } from '../auth';
@@ -11,6 +11,49 @@ import { formatMXN } from '../constants';
 // Estilo compartido de las casillas
 const inputBase =
   'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+
+// Estilo para correo y contraseña: SIN mayúsculas forzadas, para que se vea
+// tal cual lo escribes (importante: la contraseña distingue may/minúsculas).
+const inputAuth =
+  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[13px] normal-case tracking-normal placeholder:text-brand-gray-400 placeholder:normal-case focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+
+// Campo de contraseña con botón de ver / ocultar (ojito).
+// Está fuera del componente para no perder el foco al escribir.
+function PasswordInput({
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  toggleLabel,
+}: {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  toggleLabel: string;
+}) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={`${inputAuth} pr-11`}
+      />
+      <button
+        type="button"
+        onClick={() => setShow((s) => !s)}
+        aria-label={toggleLabel}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-gray-400 hover:text-brand-blue transition-colors"
+      >
+        {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+}
 
 // Casilla reutilizable (fuera del componente para no perder el foco al escribir)
 type FieldProps = {
@@ -185,13 +228,12 @@ export default function Cuenta() {
               <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
                 {t.cuenta.newPassLabel}
               </label>
-              <input
-                type="password"
+              <PasswordInput
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder={t.cuenta.passwordPh}
-                className={inputBase}
                 autoComplete="new-password"
+                toggleLabel={t.cuenta.togglePass}
               />
             </div>
             {recoveryMsg && (
@@ -250,7 +292,7 @@ export default function Cuenta() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.cuenta.emailPh}
-                  className={inputBase}
+                  className={inputAuth}
                   autoComplete="email"
                 />
               </div>
@@ -391,7 +433,7 @@ export default function Cuenta() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.cuenta.emailPh}
-                  className={inputBase}
+                  className={inputAuth}
                   autoComplete="email"
                 />
               </div>
@@ -399,13 +441,12 @@ export default function Cuenta() {
                 <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.password}
                 </label>
-                <input
-                  type="password"
+                <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.cuenta.passwordPh}
-                  className={inputBase}
                   autoComplete={modo === 'signup' ? 'new-password' : 'current-password'}
+                  toggleLabel={t.cuenta.togglePass}
                 />
                 {/* ¿Olvidaste tu contraseña? — solo al iniciar sesión */}
                 {modo === 'login' && (
@@ -723,16 +764,15 @@ function CuentaPrivada({
             <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
               {t.cuenta.newPassLabel}
             </label>
-            <input
-              type="password"
+            <PasswordInput
               value={nuevaPass}
               onChange={(e) => {
                 setNuevaPass(e.target.value);
                 setCambioPassOk(false);
               }}
               placeholder={t.cuenta.passwordPh}
-              className={inputBase}
               autoComplete="new-password"
+              toggleLabel={t.cuenta.togglePass}
             />
           </div>
 
