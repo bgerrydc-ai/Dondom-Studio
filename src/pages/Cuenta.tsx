@@ -518,11 +518,37 @@ function CuentaPrivada({
   lang: string;
 }) {
   const navigate = useNavigate();
+  const { updatePassword } = useAuth();
   const [perfil, setPerfil] = useState<Perfil>(EMPTY_PERFIL);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savedProfile, setSavedProfile] = useState(false);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+
+  // Cambiar contraseña (estando dentro de la cuenta)
+  const [nuevaPass, setNuevaPass] = useState('');
+  const [cambiandoPass, setCambiandoPass] = useState(false);
+  const [cambioPassMsg, setCambioPassMsg] = useState('');
+  const [cambioPassOk, setCambioPassOk] = useState(false);
+
+  const handleCambiarPass = async (e: FormEvent) => {
+    e.preventDefault();
+    setCambioPassMsg('');
+    setCambioPassOk(false);
+    if (nuevaPass.length < 6) {
+      setCambioPassMsg(t.cuenta.minPassword);
+      return;
+    }
+    setCambiandoPass(true);
+    const { error } = await updatePassword(nuevaPass);
+    setCambiandoPass(false);
+    if (error) {
+      setCambioPassMsg(error);
+      return;
+    }
+    setNuevaPass('');
+    setCambioPassOk(true);
+  };
 
   // Cargamos el perfil y los pedidos del cliente
   useEffect(() => {
@@ -687,6 +713,52 @@ function CuentaPrivada({
             )}
           </div>
         </div>
+
+        {/* ── CAMBIAR CONTRASEÑA ── */}
+        <form onSubmit={handleCambiarPass} className="mt-16 pt-10 border-t border-brand-gray-200 max-w-md">
+          <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+            {t.cuenta.changePassTitle}
+          </h2>
+          <div>
+            <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+              {t.cuenta.newPassLabel}
+            </label>
+            <input
+              type="password"
+              value={nuevaPass}
+              onChange={(e) => {
+                setNuevaPass(e.target.value);
+                setCambioPassOk(false);
+              }}
+              placeholder={t.cuenta.passwordPh}
+              className={inputBase}
+              autoComplete="new-password"
+            />
+          </div>
+
+          {cambioPassMsg && (
+            <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
+              {cambioPassMsg}
+            </p>
+          )}
+
+          <div className="flex items-center gap-4 mt-5">
+            <button
+              type="submit"
+              disabled={cambiandoPass}
+              className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+            >
+              <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+            {cambioPassOk && (
+              <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                {t.cuenta.passUpdated}
+              </span>
+            )}
+          </div>
+        </form>
       </main>
     </div>
   );

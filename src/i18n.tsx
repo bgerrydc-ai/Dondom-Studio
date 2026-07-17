@@ -241,6 +241,7 @@ export const translations = {
       newPassLabel: 'Nueva contraseña',
       newPassBtn: 'Guardar contraseña',
       passUpdated: '¡Tu contraseña se actualizó! Ya puedes usarla para entrar.',
+      changePassTitle: 'Cambiar contraseña',
       // Mensajes
       confirmEmail: 'Te enviamos un correo para confirmar tu cuenta. Revísalo (y la carpeta de spam) para activarla.',
       loginError: 'Correo o contraseña incorrectos.',
@@ -512,6 +513,7 @@ export const translations = {
       newPassLabel: 'New password',
       newPassBtn: 'Save password',
       passUpdated: 'Your password was updated! You can now use it to sign in.',
+      changePassTitle: 'Change password',
       confirmEmail: 'We sent you an email to confirm your account. Check it (and your spam folder) to activate it.',
       loginError: 'Incorrect email or password.',
       minPassword: 'Password must be at least 6 characters.',
