@@ -1,5 +1,6 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, LogOut, CheckCircle } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
@@ -122,11 +123,43 @@ export default function Cuenta() {
         <Header />
         <main className="max-w-[440px] mx-auto px-8 py-16">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
-            {modo === 'login' ? t.cuenta.loginTitle : t.cuenta.signupTitle}
+            {t.cuenta.accountTitle}
           </h1>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-10">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8">
             {t.cuenta.optionalNote}
           </p>
+
+          {/* Pestañas grandes: Iniciar sesión / Crear cuenta */}
+          <div className="flex border border-brand-gray-300 mb-8">
+            <button
+              type="button"
+              onClick={() => {
+                setModo('login');
+                setAuthMsg('');
+              }}
+              className={`flex-1 font-mono text-[10px] uppercase tracking-widest py-4 transition-colors ${
+                modo === 'login'
+                  ? 'bg-brand-black text-brand-white'
+                  : 'text-brand-gray-400 hover:text-brand-black'
+              }`}
+            >
+              {t.cuenta.loginTitle}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setModo('signup');
+                setAuthMsg('');
+              }}
+              className={`flex-1 font-mono text-[10px] uppercase tracking-widest py-4 transition-colors border-l border-brand-gray-300 ${
+                modo === 'signup'
+                  ? 'bg-brand-black text-brand-white'
+                  : 'text-brand-gray-400 hover:text-brand-black'
+              }`}
+            >
+              {t.cuenta.signupTitle}
+            </button>
+          </div>
 
           {confirmSent ? (
             <motion.div
@@ -194,20 +227,6 @@ export default function Cuenta() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {/* Cambiar entre iniciar sesión y registrarse */}
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center pt-2">
-                {modo === 'login' ? t.cuenta.noAccount : t.cuenta.hasAccount}{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setModo(modo === 'login' ? 'signup' : 'login');
-                    setAuthMsg('');
-                  }}
-                  className="text-brand-blue hover:underline"
-                >
-                  {modo === 'login' ? t.cuenta.goSignup : t.cuenta.goLogin}
-                </button>
-              </p>
             </motion.form>
           )}
         </main>
@@ -233,6 +252,7 @@ function CuentaPrivada({
   t: ReturnType<typeof useLang>['t'];
   lang: string;
 }) {
+  const navigate = useNavigate();
   const [perfil, setPerfil] = useState<Perfil>(EMPTY_PERFIL);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savedProfile, setSavedProfile] = useState(false);
@@ -328,7 +348,7 @@ function CuentaPrivada({
               <Field label={t.cuenta.state} name="estado" value={perfil.estado} onChange={handleProfileChange} full />
             </div>
 
-            <div className="flex items-center gap-4 mt-6">
+            <div className="mt-6">
               <button
                 type="submit"
                 disabled={savingProfile}
@@ -337,10 +357,27 @@ function CuentaPrivada({
                 <span>{savingProfile ? t.cuenta.saving : t.cuenta.saveProfile}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
+
+              {/* Confirmación grande + invitación a comprar */}
               {savedProfile && (
-                <span className="font-mono text-[9px] uppercase tracking-widest text-brand-blue">
-                  {t.cuenta.profileSaved}
-                </span>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-5 border border-brand-blue p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
+                  <span className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-brand-blue">
+                    <CheckCircle className="w-5 h-5 shrink-0" />
+                    {t.cuenta.profileSaved}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/tienda')}
+                    className="flex items-center justify-center gap-2 bg-brand-black text-brand-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-blue hover:text-white transition-colors shrink-0"
+                  >
+                    {t.cuenta.goShop}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </motion.div>
               )}
             </div>
           </form>
