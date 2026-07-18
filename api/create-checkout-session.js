@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const stripe = new Stripe(secret);
 
   try {
-    const { items, orderId, origin } = req.body || {};
+    const { items, orderId, origin, email } = req.body || {};
     if (!Array.isArray(items) || items.length === 0) {
       res.status(400).json({ error: 'Carrito vacío' });
       return;
@@ -69,6 +69,8 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
+      // Correo del cliente: Stripe le manda el recibo (si activas los recibos)
+      ...(email ? { customer_email: email } : {}),
       // A dónde regresa el cliente después de pagar (o de cancelar)
       success_url: `${base}/checkout?pagado=${encodeURIComponent(orderId || '')}`,
       cancel_url: `${base}/checkout?cancelado=1`,

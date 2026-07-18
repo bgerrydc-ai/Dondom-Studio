@@ -160,7 +160,7 @@ export const translations = {
       checkout: 'Pagar',
       addToCart: 'Agregar al carrito',
       remove: 'Quitar',
-      freeShippingNote: 'Envío gratis en compras mayores a $1,500',
+      freeShippingNote: 'Envío gratis a todo México',
     },
     checkout: {
       title: 'Finalizar compra',
@@ -289,6 +289,11 @@ export const translations = {
       privacy: 'Política de Privacidad',
       updated: 'Última actualización',
       backHome: 'Volver al inicio',
+    },
+    notFound: {
+      title: 'Página no encontrada',
+      text: 'La dirección que buscas no existe o se movió.',
+      back: 'Ir al inicio',
     },
   },
 
@@ -443,7 +448,7 @@ export const translations = {
       checkout: 'Checkout',
       addToCart: 'Add to cart',
       remove: 'Remove',
-      freeShippingNote: 'Free shipping on orders over $1,500',
+      freeShippingNote: 'Free shipping across Mexico',
     },
     checkout: {
       title: 'Checkout',
@@ -565,6 +570,11 @@ export const translations = {
       privacy: 'Privacy Policy',
       updated: 'Last updated',
       backHome: 'Back to home',
+    },
+    notFound: {
+      title: 'Page not found',
+      text: "The page you're looking for doesn't exist or was moved.",
+      back: 'Go home',
     },
   },
 } as const;

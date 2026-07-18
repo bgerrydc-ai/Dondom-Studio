@@ -187,6 +187,7 @@ export default function Checkout() {
           items: items.map((i) => ({ codigo: i.code, cantidad: i.qty })),
           orderId: newOrderId,
           origin: window.location.origin,
+          email: form.correo.trim(),
         }),
       });
       const json = await resp.json();

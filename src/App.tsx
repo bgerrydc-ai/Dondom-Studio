@@ -13,6 +13,7 @@ import Checkout     from './pages/Checkout';
 import Cuenta       from './pages/Cuenta';
 import Terminos     from './pages/Terminos';
 import Privacidad   from './pages/Privacidad';
+import NotFound     from './pages/NotFound';
 
 export default function App() {
   return (
@@ -31,6 +32,8 @@ export default function App() {
                 <Route path="/cuenta"        element={<Cuenta />} />
                 <Route path="/terminos"      element={<Terminos />} />
                 <Route path="/privacidad"    element={<Privacidad />} />
+                {/* Cualquier otra dirección → página 404 */}
+                <Route path="*"              element={<NotFound />} />
               </Routes>
               {/* La ventanita del carrito vive fuera de las rutas para que
                   esté disponible en todas las páginas */}
