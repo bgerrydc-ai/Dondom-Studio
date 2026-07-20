@@ -1,9 +1,11 @@
 import { motion } from 'motion/react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
+import { usePageTitle } from '../usePageTitle';
 
 export default function QuienesSomos() {
   const { t } = useLang();
+  usePageTitle(t.nav.quienesSomos);
 
   return (
     <div className="min-h-screen bg-brand-white">

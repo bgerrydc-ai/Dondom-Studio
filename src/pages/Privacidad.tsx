@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { CONTACT } from '../constants';
+import { usePageTitle } from '../usePageTitle';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PÁGINA DE POLÍTICA DE PRIVACIDAD (AVISO DE PRIVACIDAD)
@@ -28,6 +29,7 @@ function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) 
 export default function Privacidad() {
   const navigate = useNavigate();
   const { t } = useLang();
+  usePageTitle(t.legal.privacy);
 
   return (
     <div className="min-h-screen bg-brand-white">
@@ -91,7 +93,7 @@ export default function Privacidad() {
           <p>
             Solo compartimos tus datos con proveedores que nos ayudan a operar,
             por ejemplo: servicios de base de datos y hospedaje, plataformas de
-            pago (como Mercado Pago) y empresas de paquetería para el envío. Estos
+            pago (como Stripe) y empresas de paquetería para el envío. Estos
             proveedores solo usan tus datos para prestarnos su servicio.
           </p>
         </Seccion>

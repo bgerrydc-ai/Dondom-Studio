@@ -5,11 +5,13 @@ import { CONTACT } from '../constants';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useProducts } from '../products';
+import { usePageTitle } from '../usePageTitle';
 
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useLang();
   const { products } = useProducts();
+  usePageTitle(); // título general de la marca
 
   const containerVariants = {
     hidden: { opacity: 0 },

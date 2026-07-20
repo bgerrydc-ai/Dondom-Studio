@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
+import { usePageTitle } from '../usePageTitle';
 
 // Página que se muestra cuando la dirección no existe (error 404)
 export default function NotFound() {
   const navigate = useNavigate();
   const { t } = useLang();
+  usePageTitle('404');
 
   return (
     <div className="min-h-screen bg-brand-white">

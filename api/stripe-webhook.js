@@ -58,8 +58,11 @@ export default async function handler(req, res) {
     const orderId = session.metadata && session.metadata.orderId;
 
     if (orderId) {
+      // Si no logramos marcar el pedido, respondemos error para que
+      // Stripe REINTENTE el aviso más tarde (así el pedido no se queda
+      // en "pendiente" por un fallo pasajero de la base de datos).
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${orderId}`, {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${orderId}`, {
           method: 'PATCH',
           headers: {
             apikey: serviceRole,
@@ -69,9 +72,15 @@ export default async function handler(req, res) {
           },
           body: JSON.stringify({ estado: 'pagado' }),
         });
+        if (!r.ok) {
+          console.error('Supabase no aceptó la actualización:', r.status);
+          res.status(500).json({ error: 'No se pudo marcar el pedido como pagado' });
+          return;
+        }
       } catch (e) {
-        // No rompemos el webhook por esto; Stripe reintentará si respondemos error
         console.error('Error marcando pedido pagado:', e);
+        res.status(500).json({ error: 'No se pudo marcar el pedido como pagado' });
+        return;
       }
     }
   }

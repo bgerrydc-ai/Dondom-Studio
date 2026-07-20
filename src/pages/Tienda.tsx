@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useProducts } from '../products';
+import { usePageTitle } from '../usePageTitle';
 
 export default function Tienda() {
   const navigate = useNavigate();
   const { t } = useLang();
   const { products } = useProducts();
+  usePageTitle(t.tienda.title);
   const [filtro, setFiltro] = useState('todos');
 
   const FILTROS = [

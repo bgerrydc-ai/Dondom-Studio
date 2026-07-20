@@ -8,6 +8,7 @@ import { useLang } from '../i18n';
 import { useAuth } from '../auth';
 import { formatMXN } from '../constants';
 import { supabase } from '../supabase';
+import { usePageTitle } from '../usePageTitle';
 
 interface ShippingData {
   nombres: string;
@@ -71,6 +72,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { t } = useLang();
   const { user } = useAuth();
+  usePageTitle(t.checkout.title);
 
   const [form, setForm] = useState<ShippingData>(EMPTY);
   const [placing, setPlacing] = useState(false);

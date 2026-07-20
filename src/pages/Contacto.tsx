@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { CONTACT } from '../constants';
 import { useLang } from '../i18n';
 import { supabase } from '../supabase';
+import { usePageTitle } from '../usePageTitle';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CÓMO FUNCIONA ESTE FORMULARIO:
@@ -24,6 +25,7 @@ const EMPTY: FormData = { nombre: '', telefono: '', comentario: '' };
 
 export default function Contacto() {
   const { t } = useLang();
+  usePageTitle(t.contacto.title);
   const [form, setForm] = useState<FormData>(EMPTY);
   const [sending, setSending] = useState(false); // guardando en la base de datos
   const [sent, setSent] = useState(false);       // guardado con éxito

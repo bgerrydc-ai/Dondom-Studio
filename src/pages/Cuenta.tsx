@@ -7,6 +7,7 @@ import { useLang } from '../i18n';
 import { useAuth } from '../auth';
 import { supabase } from '../supabase';
 import { formatMXN } from '../constants';
+import { usePageTitle } from '../usePageTitle';
 
 // Estilo compartido de las casillas
 const inputBase =
@@ -104,6 +105,7 @@ interface Pedido {
 
 export default function Cuenta() {
   const { t, lang } = useLang();
+  usePageTitle(t.nav.cuenta);
   const { user, loading, signUp, signIn, signOut, resetPassword, updatePassword, isRecovery } = useAuth();
 
   // ── Formulario de acceso (registro / inicio de sesión / recuperar) ──

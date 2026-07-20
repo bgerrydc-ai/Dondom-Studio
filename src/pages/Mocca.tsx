@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useCart } from '../cart';
 import { useProducts } from '../products';
+import { usePageTitle } from '../usePageTitle';
 
 // Foto de respaldo para la página de detalles (si la base no trae imagen)
 const PRODUCT_IMAGE = '/products/ar01-frente.jpg';
@@ -16,6 +17,7 @@ export default function Mocca() {
   const { t } = useLang();
   const { add } = useCart();
   const { products, loading } = useProducts();
+  usePageTitle('MOCCA');
 
   // Este es el producto AR/01 MOCCA (viene de Supabase)
   const product = products.find((p) => p.slug === 'mocca');
@@ -76,7 +78,7 @@ export default function Mocca() {
             {/* Mini barra superior del marco */}
             <div className="flex justify-between items-center border border-b-0 border-brand-gray-200 px-4 py-2.5">
               <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
-                001
+                {product.num}
               </span>
               <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
                 {t.mocca.serie}

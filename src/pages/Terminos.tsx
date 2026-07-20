@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { CONTACT } from '../constants';
+import { usePageTitle } from '../usePageTitle';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PÁGINA DE TÉRMINOS Y CONDICIONES
@@ -28,6 +29,7 @@ function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) 
 export default function Terminos() {
   const navigate = useNavigate();
   const { t } = useLang();
+  usePageTitle(t.legal.terms);
 
   return (
     <div className="min-h-screen bg-brand-white">
@@ -78,8 +80,8 @@ export default function Terminos() {
           <p>
             Al realizar un pedido haces una oferta de compra que queda sujeta a
             nuestra confirmación y a la disponibilidad del producto. Los pagos se
-            procesan a través de plataformas externas (por ejemplo, Mercado
-            Pago); nosotros no almacenamos los datos completos de tu tarjeta.
+            procesan a través de plataformas externas (por ejemplo, Stripe);
+            nosotros no almacenamos los datos completos de tu tarjeta.
           </p>
           <p>
             Nos reservamos el derecho de rechazar o cancelar un pedido en caso de

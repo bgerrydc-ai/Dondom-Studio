@@ -67,12 +67,4 @@ export const CONTACT = {
   email: "Dondommanagment@gmail.com",
 };
 
-// ─── PAGOS (D2C — venta directa al consumidor) ───
-// Mercado Pago: cuando Gerardo genere el "link de pago" en su panel de
-// Mercado Pago, se pega aquí y el botón "Comprar ahora" lo usará.
-// Mientras esté vacío (""), el botón usa WhatsApp como respaldo para no
-// perder ventas.
-export const PAYMENTS = {
-  mercadoPagoLink: "https://mpago.la/2QfH8Rr",
-  // Futuro: paypalLink: "", stripeLink: ""
-};
+// Los pagos se procesan con Stripe — ver api/create-checkout-session.js
