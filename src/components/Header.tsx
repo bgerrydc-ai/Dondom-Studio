@@ -41,7 +41,7 @@ export default function Header() {
         {/* Logo */}
         <NavLink
           to="/"
-          className="font-extrabold text-xs tracking-widest uppercase hover:text-brand-blue transition-colors"
+          className="font-extrabold text-sm md:text-base tracking-widest uppercase hover:text-brand-blue transition-colors"
         >
           DONDOM STUDIO
         </NavLink>
@@ -56,7 +56,7 @@ export default function Header() {
                 to={link.to}
                 end={link.to === '/'}
                 className={({ isActive }) =>
-                  `font-mono text-[10px] uppercase tracking-widest pb-0.5 transition-colors ${
+                  `font-mono text-[11px] uppercase tracking-widest pb-0.5 transition-colors ${
                     isActive
                       ? 'text-brand-blue border-b border-brand-blue'
                       : 'text-brand-gray-400 hover:text-brand-black'
@@ -73,12 +73,12 @@ export default function Header() {
             to="/cuenta"
             aria-label={t.nav.cuenta}
             className={({ isActive }) =>
-              `relative p-1.5 transition-colors ${
+              `relative p-2 transition-colors ${
                 isActive ? 'text-brand-blue' : 'hover:text-brand-blue'
               }`
             }
           >
-            <User className="w-4 h-4" />
+            <User className="w-5 h-5" />
             {/* Punto azul si hay sesión iniciada */}
             {user && (
               <span className="absolute -top-0.5 -right-0.5 bg-brand-blue rounded-full w-2 h-2" />
@@ -89,11 +89,11 @@ export default function Header() {
           <button
             onClick={openCart}
             aria-label={t.cart.title}
-            className="relative p-1.5 hover:text-brand-blue transition-colors"
+            className="relative p-2 hover:text-brand-blue transition-colors"
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-5 h-5" />
             {count > 0 && (
-              <span className="absolute -top-1 -right-1 bg-brand-blue text-white text-[8px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-brand-blue text-white text-[9px] font-bold rounded-full min-w-[17px] h-[17px] px-1 flex items-center justify-center">
                 {count}
               </span>
             )}
@@ -103,7 +103,7 @@ export default function Header() {
           <button
             onClick={toggle}
             aria-label="Cambiar idioma / Change language"
-            className="font-mono text-[10px] tracking-widest border border-brand-gray-300 px-2.5 py-1.5 hover:border-brand-blue transition-colors"
+            className="font-mono text-[11px] tracking-widest border border-brand-gray-300 px-3 py-2 hover:border-brand-blue transition-colors"
           >
             <span className={lang === 'es' ? 'text-brand-blue font-bold' : 'text-brand-gray-400'}>
               ES
@@ -118,9 +118,9 @@ export default function Header() {
           <button
             onClick={toggleTheme}
             aria-label="Cambiar tema"
-            className="p-1.5 border border-brand-gray-300 hover:border-brand-blue hover:text-brand-blue transition-colors"
+            className="p-2 border border-brand-gray-300 hover:border-brand-blue hover:text-brand-blue transition-colors"
           >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
 
           {/* Botón hamburguesa (móvil) */}

@@ -79,10 +79,10 @@ export default function Home() {
                 >
                   <a
                     href="#catalogo"
-                    className="inline-flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-black hover:text-brand-white transition-colors"
+                    className="inline-flex items-center gap-3 bg-brand-blue text-white font-mono text-xs uppercase tracking-widest px-9 py-4 hover:bg-brand-black hover:text-brand-white transition-colors"
                   >
                     {t.home.viewCollection}
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-5 h-5" />
                   </a>
                 </motion.div>
               </div>
