@@ -561,7 +561,7 @@ function CuentaPrivada({
   lang: string;
 }) {
   const navigate = useNavigate();
-  const { updatePassword } = useAuth();
+  const { updatePassword, resetPassword } = useAuth();
   const [perfil, setPerfil] = useState<Perfil>(EMPTY_PERFIL);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savedProfile, setSavedProfile] = useState(false);
@@ -587,28 +587,59 @@ function CuentaPrivada({
   };
 
   // Cambiar contraseña (estando dentro de la cuenta)
+  const [passActual, setPassActual] = useState('');
   const [nuevaPass, setNuevaPass] = useState('');
   const [cambiandoPass, setCambiandoPass] = useState(false);
   const [cambioPassMsg, setCambioPassMsg] = useState('');
   const [cambioPassOk, setCambioPassOk] = useState(false);
 
+  // "¿No recuerdas tu contraseña actual?" → mandamos el enlace al correo
+  const [resetEnviado, setResetEnviado] = useState(false);
+  const [enviandoReset, setEnviandoReset] = useState(false);
+
   const handleCambiarPass = async (e: FormEvent) => {
     e.preventDefault();
     setCambioPassMsg('');
     setCambioPassOk(false);
+    if (!passActual || !nuevaPass) {
+      setCambioPassMsg(t.cuenta.fillFields);
+      return;
+    }
     if (nuevaPass.length < 6) {
       setCambioPassMsg(t.cuenta.minPassword);
       return;
     }
     setCambiandoPass(true);
+
+    // SEGURIDAD: antes de cambiar nada, comprobamos que la contraseña
+    // actual sea correcta (volvemos a iniciar sesión con ella). Así, si
+    // alguien encuentra tu sesión abierta, NO puede cambiarte la contraseña.
+    const { error: errActual } = await supabase.auth.signInWithPassword({
+      email: user.email ?? '',
+      password: passActual,
+    });
+    if (errActual) {
+      setCambiandoPass(false);
+      setCambioPassMsg(t.cuenta.wrongCurrentPass);
+      return;
+    }
+
     const { error } = await updatePassword(nuevaPass);
     setCambiandoPass(false);
     if (error) {
       setCambioPassMsg(error);
       return;
     }
+    setPassActual('');
     setNuevaPass('');
     setCambioPassOk(true);
+  };
+
+  const handleOlvideActual = async () => {
+    setEnviandoReset(true);
+    await resetPassword(user.email ?? '');
+    setEnviandoReset(false);
+    setResetEnviado(true);
   };
 
   // Cargamos el perfil y los pedidos del cliente
@@ -860,49 +891,96 @@ function CuentaPrivada({
 
         {/* ══ PESTAÑA: SEGURIDAD (cambiar contraseña) ══ */}
         {tab === 'seguridad' && (
-          <form onSubmit={handleCambiarPass} className="max-w-md">
-            <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
-              {t.cuenta.changePassTitle}
-            </h2>
-            <div>
-              <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-                {t.cuenta.newPassLabel}
-              </label>
-              <PasswordInput
-                value={nuevaPass}
-                onChange={(e) => {
-                  setNuevaPass(e.target.value);
-                  setCambioPassOk(false);
-                }}
-                placeholder={t.cuenta.passwordPh}
-                autoComplete="new-password"
-                toggleLabel={t.cuenta.togglePass}
-              />
-            </div>
+          <div className="max-w-md">
+            <form onSubmit={handleCambiarPass}>
+              <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+                {t.cuenta.changePassTitle}
+              </h2>
 
-            {cambioPassMsg && (
-              <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
-                {cambioPassMsg}
+              {/* Contraseña actual (obligatoria, por seguridad) */}
+              <div className="mb-5">
+                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                  {t.cuenta.currentPassLabel}
+                </label>
+                <PasswordInput
+                  value={passActual}
+                  onChange={(e) => {
+                    setPassActual(e.target.value);
+                    setCambioPassOk(false);
+                  }}
+                  placeholder={t.cuenta.passwordPh}
+                  autoComplete="current-password"
+                  toggleLabel={t.cuenta.togglePass}
+                />
+              </div>
+
+              {/* Nueva contraseña */}
+              <div>
+                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                  {t.cuenta.newPassLabel}
+                </label>
+                <PasswordInput
+                  value={nuevaPass}
+                  onChange={(e) => {
+                    setNuevaPass(e.target.value);
+                    setCambioPassOk(false);
+                  }}
+                  placeholder={t.cuenta.passwordPh}
+                  autoComplete="new-password"
+                  toggleLabel={t.cuenta.togglePass}
+                />
+              </div>
+
+              {cambioPassMsg && (
+                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
+                  {cambioPassMsg}
+                </p>
+              )}
+
+              <div className="flex items-center gap-4 mt-5">
+                <button
+                  type="submit"
+                  disabled={cambiandoPass}
+                  className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+                >
+                  <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+                {cambioPassOk && (
+                  <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                    <CheckCircle className="w-4 h-4 shrink-0" />
+                    {t.cuenta.passUpdated}
+                  </span>
+                )}
+              </div>
+            </form>
+
+            {/* ¿No recuerdas tu contraseña actual? → enlace por correo */}
+            <div className="mt-10 pt-6 border-t border-brand-gray-200">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-3">
+                {t.cuenta.forgotInsideQ}
               </p>
-            )}
-
-            <div className="flex items-center gap-4 mt-5">
-              <button
-                type="submit"
-                disabled={cambiandoPass}
-                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
-              >
-                <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-              {cambioPassOk && (
-                <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+              {resetEnviado ? (
+                <motion.p
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue leading-relaxed"
+                >
                   <CheckCircle className="w-4 h-4 shrink-0" />
-                  {t.cuenta.passUpdated}
-                </span>
+                  {t.cuenta.forgotInsideSent}
+                </motion.p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleOlvideActual}
+                  disabled={enviandoReset}
+                  className="font-mono text-[9px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors disabled:opacity-60"
+                >
+                  {enviandoReset ? t.cuenta.processing : t.cuenta.forgotInsideBtn}
+                </button>
               )}
             </div>
-          </form>
+          </div>
         )}
 
         {/* ══ PESTAÑA: PREFERENCIAS (correos de novedades) ══ */}
