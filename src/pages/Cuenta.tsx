@@ -568,6 +568,24 @@ function CuentaPrivada({
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
+  // Pestañas de la cuenta: mis datos / mis pedidos / seguridad / preferencias
+  const [tab, setTab] = useState<'datos' | 'pedidos' | 'seguridad' | 'prefs'>('datos');
+  // ¿Mostrar también las compras que se quedaron sin pagar?
+  const [verPendientes, setVerPendientes] = useState(false);
+
+  // Preferencias: recibir (o no) correos de novedades
+  const [marketing, setMarketing] = useState(false);
+  const [savingPrefs, setSavingPrefs] = useState(false);
+  const [savedPrefs, setSavedPrefs] = useState(false);
+
+  const handleSavePrefs = async (e: FormEvent) => {
+    e.preventDefault();
+    setSavingPrefs(true);
+    await supabase.from('perfiles').upsert({ id: user.id, acepta_marketing: marketing });
+    setSavingPrefs(false);
+    setSavedPrefs(true);
+  };
+
   // Cambiar contraseña (estando dentro de la cuenta)
   const [nuevaPass, setNuevaPass] = useState('');
   const [cambiandoPass, setCambiandoPass] = useState(false);
@@ -609,6 +627,7 @@ function CuentaPrivada({
           cp: p.cp ?? '', colonia: p.colonia ?? '', ciudad: p.ciudad ?? '',
           municipio: p.municipio ?? '', estado: p.estado ?? '',
         });
+        setMarketing(!!p.acepta_marketing);
       }
       if (ped) setPedidos(ped as Pedido[]);
       setLoadingData(false);
@@ -636,6 +655,57 @@ function CuentaPrivada({
       year: 'numeric', month: 'short', day: 'numeric',
     });
 
+  // Pedidos reales (pagados/enviados/entregados) vs. compras sin terminar
+  const pedidosReales = pedidos.filter((p) => p.estado !== 'pendiente');
+  const pendientes = pedidos.filter((p) => p.estado === 'pendiente');
+
+  // Traducción y color de cada estado
+  const estadoTexto = (estado: string) =>
+    (({
+      pendiente: t.cuenta.estadoPendiente,
+      pagado: t.cuenta.estadoPagado,
+      enviado: t.cuenta.estadoEnviado,
+      entregado: t.cuenta.estadoEntregado,
+    }) as Record<string, string>)[estado] ?? estado;
+
+  const estadoEstilo = (estado: string) =>
+    estado === 'pagado'
+      ? 'text-brand-blue border-brand-blue'
+      : estado === 'pendiente'
+        ? 'text-brand-gray-400 border-brand-gray-300'
+        : 'text-brand-black border-brand-black';
+
+  // Renglón de un pedido en la lista
+  const renderPedido = (ped: Pedido) => (
+    <div key={ped.id} className="px-5 py-4 flex flex-col gap-1.5">
+      <div className="flex justify-between items-center">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
+          #{ped.id.slice(0, 8)}
+        </span>
+        <span className="font-mono text-[11px] tracking-widest">
+          {formatMXN(Number(ped.total_mxn))}
+        </span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+          {fmtDate(ped.creado_en)}
+        </span>
+        <span
+          className={`font-mono text-[8px] uppercase tracking-widest border px-2 py-0.5 ${estadoEstilo(ped.estado)}`}
+        >
+          {estadoTexto(ped.estado)}
+        </span>
+      </div>
+    </div>
+  );
+
+  const TABS = [
+    { id: 'datos', label: t.cuenta.tabDatos },
+    { id: 'pedidos', label: t.cuenta.tabPedidos },
+    { id: 'seguridad', label: t.cuenta.tabSeguridad },
+    { id: 'prefs', label: t.cuenta.tabPrefs },
+  ] as const;
+
   return (
     <div className="min-h-screen bg-brand-white">
       <Header />
@@ -659,12 +729,27 @@ function CuentaPrivada({
           </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-          {/* ── PERFIL ── */}
-          <form onSubmit={handleSaveProfile} className="flex-1 w-full">
-            <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-2">
-              {t.cuenta.profileTitle}
-            </h2>
+        {/* ── PESTAÑAS: Mis datos / Mis pedidos / Seguridad / Preferencias ── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-brand-gray-300 border border-brand-gray-300 mb-12">
+          {TABS.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setTab(id)}
+              className={`font-mono text-[10px] uppercase tracking-widest py-4 px-2 transition-colors ${
+                tab === id
+                  ? 'bg-brand-blue text-white'
+                  : 'bg-brand-white text-brand-gray-400 hover:text-brand-black'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* ══ PESTAÑA: MIS DATOS ══ */}
+        {tab === 'datos' && (
+          <form onSubmit={handleSaveProfile} className="max-w-2xl">
             <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-5">
               {t.cuenta.profileNote}
             </p>
@@ -715,92 +800,150 @@ function CuentaPrivada({
               )}
             </div>
           </form>
+        )}
 
-          {/* ── HISTORIAL DE PEDIDOS ── */}
-          <div className="w-full lg:w-[360px] shrink-0">
-            <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
-              {t.cuenta.ordersTitle}
-            </h2>
-
+        {/* ══ PESTAÑA: MIS PEDIDOS ══ */}
+        {tab === 'pedidos' && (
+          <div className="max-w-2xl">
             {loadingData ? (
               <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
                 {t.common.loading}
               </p>
-            ) : pedidos.length === 0 ? (
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
-                {t.cuenta.ordersEmpty}
-              </p>
             ) : (
-              <div className="border border-brand-gray-200 divide-y divide-brand-gray-200">
-                {pedidos.map((ped) => (
-                  <div key={ped.id} className="px-4 py-4 flex flex-col gap-1">
-                    <div className="flex justify-between items-center">
-                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
-                        #{ped.id.slice(0, 8)}
-                      </span>
-                      <span className="font-mono text-[11px] tracking-widest">
-                        {formatMXN(Number(ped.total_mxn))}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
-                        {fmtDate(ped.creado_en)}
-                      </span>
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-brand-blue">
-                        {ped.estado}
-                      </span>
-                    </div>
+              <>
+                {pedidosReales.length === 0 ? (
+                  <div className="flex flex-col items-start gap-5">
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                      {t.cuenta.ordersEmptyPaid}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/tienda')}
+                      className="flex items-center gap-2 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-black transition-colors"
+                    >
+                      {t.cuenta.goShop}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div className="border border-brand-gray-200 divide-y divide-brand-gray-200">
+                    {pedidosReales.map(renderPedido)}
+                  </div>
+                )}
+
+                {/* Compras que se empezaron pero no se pagaron (ocultas por defecto) */}
+                {pendientes.length > 0 && (
+                  <div className="mt-10">
+                    <button
+                      type="button"
+                      onClick={() => setVerPendientes((v) => !v)}
+                      className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black border border-brand-gray-300 px-4 py-2.5 transition-colors"
+                    >
+                      {verPendientes ? t.cuenta.ocultarPendientes : t.cuenta.verPendientes} ({pendientes.length})
+                    </button>
+                    {verPendientes && (
+                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 leading-relaxed mt-4 mb-4 max-w-md">
+                          {t.cuenta.pendientesNote}
+                        </p>
+                        <div className="border border-brand-gray-200 divide-y divide-brand-gray-200 opacity-60">
+                          {pendientes.map(renderPedido)}
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
-        </div>
+        )}
 
-        {/* ── CAMBIAR CONTRASEÑA ── */}
-        <form onSubmit={handleCambiarPass} className="mt-16 pt-10 border-t border-brand-gray-200 max-w-md">
-          <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
-            {t.cuenta.changePassTitle}
-          </h2>
-          <div>
-            <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
-              {t.cuenta.newPassLabel}
-            </label>
-            <PasswordInput
-              value={nuevaPass}
-              onChange={(e) => {
-                setNuevaPass(e.target.value);
-                setCambioPassOk(false);
-              }}
-              placeholder={t.cuenta.passwordPh}
-              autoComplete="new-password"
-              toggleLabel={t.cuenta.togglePass}
-            />
-          </div>
+        {/* ══ PESTAÑA: SEGURIDAD (cambiar contraseña) ══ */}
+        {tab === 'seguridad' && (
+          <form onSubmit={handleCambiarPass} className="max-w-md">
+            <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+              {t.cuenta.changePassTitle}
+            </h2>
+            <div>
+              <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                {t.cuenta.newPassLabel}
+              </label>
+              <PasswordInput
+                value={nuevaPass}
+                onChange={(e) => {
+                  setNuevaPass(e.target.value);
+                  setCambioPassOk(false);
+                }}
+                placeholder={t.cuenta.passwordPh}
+                autoComplete="new-password"
+                toggleLabel={t.cuenta.togglePass}
+              />
+            </div>
 
-          {cambioPassMsg && (
-            <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
-              {cambioPassMsg}
+            {cambioPassMsg && (
+              <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
+                {cambioPassMsg}
+              </p>
+            )}
+
+            <div className="flex items-center gap-4 mt-5">
+              <button
+                type="submit"
+                disabled={cambiandoPass}
+                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+              >
+                <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              {cambioPassOk && (
+                <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                  <CheckCircle className="w-4 h-4 shrink-0" />
+                  {t.cuenta.passUpdated}
+                </span>
+              )}
+            </div>
+          </form>
+        )}
+
+        {/* ══ PESTAÑA: PREFERENCIAS (correos de novedades) ══ */}
+        {tab === 'prefs' && (
+          <form onSubmit={handleSavePrefs} className="max-w-xl">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-6">
+              {t.cuenta.prefsNote}
             </p>
-          )}
-
-          <div className="flex items-center gap-4 mt-5">
-            <button
-              type="submit"
-              disabled={cambiandoPass}
-              className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
-            >
-              <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            {cambioPassOk && (
-              <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                {t.cuenta.passUpdated}
+            <label className="flex items-start gap-3 cursor-pointer border border-brand-gray-200 p-5">
+              <input
+                type="checkbox"
+                checked={marketing}
+                onChange={(e) => {
+                  setMarketing(e.target.checked);
+                  setSavedPrefs(false);
+                }}
+                className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
+              />
+              <span className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+                {t.cuenta.marketingLabel}
               </span>
-            )}
-          </div>
-        </form>
+            </label>
+
+            <div className="flex items-center gap-4 mt-6">
+              <button
+                type="submit"
+                disabled={savingPrefs}
+                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+              >
+                <span>{savingPrefs ? t.cuenta.saving : t.cuenta.saveProfile}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              {savedPrefs && (
+                <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                  <CheckCircle className="w-4 h-4 shrink-0" />
+                  {t.cuenta.prefsSaved}
+                </span>
+              )}
+            </div>
+          </form>
+        )}
       </main>
     </div>
   );
