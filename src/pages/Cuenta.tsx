@@ -1,7 +1,7 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff, User, Package, Lock, Bell } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useAuth } from '../auth';
@@ -731,54 +731,71 @@ function CuentaPrivada({
   );
 
   const TABS = [
-    { id: 'datos', label: t.cuenta.tabDatos },
-    { id: 'pedidos', label: t.cuenta.tabPedidos },
-    { id: 'seguridad', label: t.cuenta.tabSeguridad },
-    { id: 'prefs', label: t.cuenta.tabPrefs },
+    { id: 'datos', label: t.cuenta.tabDatos, Icon: User },
+    { id: 'pedidos', label: t.cuenta.tabPedidos, Icon: Package },
+    { id: 'seguridad', label: t.cuenta.tabSeguridad, Icon: Lock },
+    { id: 'prefs', label: t.cuenta.tabPrefs, Icon: Bell },
   ] as const;
 
   return (
     <div className="min-h-screen bg-brand-white">
       <Header />
       <main className="max-w-[1000px] mx-auto px-8 py-16">
-        {/* Encabezado con saludo y cerrar sesión */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 border-b border-brand-black pb-8">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-2">
-              {t.cuenta.greeting}, {user.email}
-            </p>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">
-              {t.cuenta.accountTitle}
-            </h1>
-          </div>
-          <button
-            onClick={signOut}
-            className="self-start flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest border border-brand-gray-300 px-5 py-3 hover:border-brand-black transition-colors"
-          >
-            <LogOut className="w-3 h-3" />
-            {t.cuenta.signOut}
-          </button>
+        {/* Encabezado */}
+        <div className="mb-10 border-b border-brand-black pb-8">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-2">
+            {t.cuenta.greeting}, {user.email}
+          </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">
+            {t.cuenta.accountTitle}
+          </h1>
         </div>
 
-        {/* ── PESTAÑAS: Mis datos / Mis pedidos / Seguridad / Preferencias ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-brand-gray-300 border border-brand-gray-300 mb-12">
-          {TABS.map(({ id, label }) => (
+        {/* ── Layout tipo panel: menú lateral + contenido ── */}
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
+
+          {/* MENÚ LATERAL */}
+          <aside className="w-full lg:w-56 shrink-0 lg:sticky lg:top-24">
+            <nav className="grid grid-cols-2 lg:flex lg:flex-col gap-1">
+              {TABS.map(({ id, label, Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setTab(id)}
+                  className={`flex items-center gap-3 px-4 py-3.5 font-mono text-[10px] uppercase tracking-widest transition-colors text-left border-l-2 ${
+                    tab === id
+                      ? 'border-brand-blue bg-brand-gray-100 text-brand-black font-bold'
+                      : 'border-transparent text-brand-gray-400 hover:text-brand-black hover:bg-brand-gray-100'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+
+            {/* Cerrar sesión */}
             <button
-              key={id}
-              type="button"
-              onClick={() => setTab(id)}
-              className={`font-mono text-[10px] uppercase tracking-widest py-4 px-2 transition-colors ${
-                tab === id
-                  ? 'bg-brand-blue text-white'
-                  : 'bg-brand-white text-brand-gray-400 hover:text-brand-black'
-              }`}
+              onClick={signOut}
+              className="w-full mt-4 flex items-center gap-3 px-4 py-3.5 font-mono text-[10px] uppercase tracking-widest border border-brand-gray-300 text-brand-gray-400 hover:border-brand-black hover:text-brand-black transition-colors"
             >
-              {label}
+              <LogOut className="w-4 h-4 shrink-0" />
+              {t.cuenta.signOut}
             </button>
-          ))}
-        </div>
+          </aside>
 
-        {/* ══ PESTAÑA: MIS DATOS ══ */}
+          {/* CONTENIDO DE LA SECCIÓN ACTIVA */}
+          <section className="flex-1 min-w-0 w-full">
+            <motion.h2
+              key={tab}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="font-mono text-xs uppercase tracking-widest font-bold border-b border-brand-gray-200 pb-4 mb-8"
+            >
+              {TABS.find((x) => x.id === tab)?.label}
+            </motion.h2>
+
+        {/* ══ SECCIÓN: MIS DATOS ══ */}
         {tab === 'datos' && (
           <form onSubmit={handleSaveProfile} className="max-w-2xl">
             <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-5">
@@ -893,10 +910,6 @@ function CuentaPrivada({
         {tab === 'seguridad' && (
           <div className="max-w-md">
             <form onSubmit={handleCambiarPass}>
-              <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
-                {t.cuenta.changePassTitle}
-              </h2>
-
               {/* Contraseña actual (obligatoria, por seguridad) */}
               <div className="mb-5">
                 <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
@@ -1022,6 +1035,9 @@ function CuentaPrivada({
             </div>
           </form>
         )}
+
+          </section>
+        </div>
       </main>
     </div>
   );
