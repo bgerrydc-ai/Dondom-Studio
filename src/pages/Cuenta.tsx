@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff, User, Package, Lock, Bell } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
-import { useAuth } from '../auth';
+import { useAuth, traducirErrorAuth } from '../auth';
 import { supabase } from '../supabase';
 import { formatMXN } from '../constants';
 import { usePageTitle } from '../usePageTitle';
@@ -137,7 +137,7 @@ export default function Cuenta() {
     const { error } = await resetPassword(email.trim());
     setAuthBusy(false);
     if (error) {
-      setAuthMsg(error);
+      setAuthMsg(traducirErrorAuth(error, lang) ?? error);
       return;
     }
     setResetSent(true); // mostramos "revisa tu correo"
@@ -155,7 +155,7 @@ export default function Cuenta() {
     const { error } = await updatePassword(newPassword);
     setRecoveryBusy(false);
     if (error) {
-      setRecoveryMsg(error);
+      setRecoveryMsg(traducirErrorAuth(error, lang) ?? error);
       return;
     }
     setRecoveryDone(true); // isRecovery pasa a false → luego se ve la cuenta
@@ -184,7 +184,7 @@ export default function Cuenta() {
       });
       setAuthBusy(false);
       if (error) {
-        setAuthMsg(error);
+        setAuthMsg(traducirErrorAuth(error, lang) ?? error);
         return;
       }
       if (needsConfirm) {
@@ -558,7 +558,7 @@ function CuentaPrivada({
   user: { id: string; email?: string };
   signOut: () => Promise<void>;
   t: ReturnType<typeof useLang>['t'];
-  lang: string;
+  lang: ReturnType<typeof useLang>['lang'];
 }) {
   const navigate = useNavigate();
   const { updatePassword, resetPassword } = useAuth();
@@ -627,7 +627,7 @@ function CuentaPrivada({
     const { error } = await updatePassword(nuevaPass);
     setCambiandoPass(false);
     if (error) {
-      setCambioPassMsg(error);
+      setCambioPassMsg(traducirErrorAuth(error, lang) ?? error);
       return;
     }
     setPassActual('');

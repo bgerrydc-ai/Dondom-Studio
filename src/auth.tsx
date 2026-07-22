@@ -36,6 +36,66 @@ interface AuthValue {
   isRecovery: boolean; // true cuando el usuario llegó por el enlace de recuperación
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Supabase siempre manda sus mensajes de error en INGLÉS, sin importar el
+// idioma de la página. Aquí traducimos los más comunes; si no reconocemos
+// el mensaje, mostramos el original de Supabase (mejor eso que nada).
+// ─────────────────────────────────────────────────────────────────────────────
+const ERRORES_CONOCIDOS: { test: RegExp; es: string; en: string }[] = [
+  {
+    test: /new password should be different/i,
+    es: 'La nueva contraseña debe ser diferente a la anterior.',
+    en: 'The new password must be different from the previous one.',
+  },
+  {
+    test: /invalid login credentials/i,
+    es: 'Correo o contraseña incorrectos.',
+    en: 'Incorrect email or password.',
+  },
+  {
+    test: /user already registered/i,
+    es: 'Ya existe una cuenta con este correo.',
+    en: 'An account with this email already exists.',
+  },
+  {
+    test: /email not confirmed/i,
+    es: 'Debes confirmar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.',
+    en: 'You need to confirm your email before signing in. Check your inbox.',
+  },
+  {
+    test: /password should be at least/i,
+    es: 'La contraseña debe tener al menos 6 caracteres.',
+    en: 'The password must be at least 6 characters.',
+  },
+  {
+    test: /unable to validate email address/i,
+    es: 'El correo electrónico no es válido.',
+    en: 'The email address is not valid.',
+  },
+  {
+    test: /email rate limit exceeded/i,
+    es: 'Se alcanzó el límite de correos por ahora. Intenta de nuevo en unos minutos.',
+    en: 'Email limit reached for now. Try again in a few minutes.',
+  },
+  {
+    test: /for security purposes.*after (\d+) seconds/i,
+    es: 'Por seguridad, espera unos segundos antes de intentar de nuevo.',
+    en: 'For security purposes, please wait a few seconds before trying again.',
+  },
+  {
+    test: /same password/i,
+    es: 'La nueva contraseña debe ser diferente a la anterior.',
+    en: 'The new password must be different from the previous one.',
+  },
+];
+
+export function traducirErrorAuth(message: string | null, lang: 'es' | 'en'): string | null {
+  if (!message) return null;
+  const encontrado = ERRORES_CONOCIDOS.find((e) => e.test.test(message));
+  if (!encontrado) return message; // sin traducción conocida: mostramos el original
+  return lang === 'es' ? encontrado.es : encontrado.en;
+}
+
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
