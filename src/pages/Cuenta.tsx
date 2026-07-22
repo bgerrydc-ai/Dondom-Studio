@@ -252,6 +252,15 @@ export default function Cuenta() {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
+
+          {/* Cancelar: no quiere una contraseña nueva, regresa al login normal */}
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="mt-6 font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+          >
+            ← {t.cuenta.cancelRecovery}
+          </button>
         </main>
       </div>
     );

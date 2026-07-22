@@ -250,6 +250,7 @@ export const translations = {
       forgotInsideQ: '¿No recuerdas tu contraseña actual?',
       forgotInsideBtn: 'Enviarme un enlace por correo',
       forgotInsideSent: 'Te enviamos un correo con el enlace para restablecerla. Revisa tu bandeja (y spam).',
+      cancelRecovery: 'No quiero cambiarla, volver a iniciar sesión',
       // Mensajes
       confirmEmail: 'Te enviamos un correo para confirmar tu cuenta. Revísalo (y la carpeta de spam) para activarla.',
       loginError: 'Correo o contraseña incorrectos.',
@@ -552,6 +553,7 @@ export const translations = {
       forgotInsideQ: "Don't remember your current password?",
       forgotInsideBtn: 'Email me a reset link',
       forgotInsideSent: 'We sent you an email with a reset link. Check your inbox (and spam).',
+      cancelRecovery: "I don't want to change it, back to sign in",
       confirmEmail: 'We sent you an email to confirm your account. Check it (and your spam folder) to activate it.',
       loginError: 'Incorrect email or password.',
       minPassword: 'Password must be at least 6 characters.',

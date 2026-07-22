@@ -119,6 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Cuando el usuario abre el enlace de "recuperar contraseña", Supabase
       // dispara este evento: entramos en modo recuperación para pedirle la nueva.
       if (event === 'PASSWORD_RECOVERY') setIsRecovery(true);
+      // Si cierra sesión (por ejemplo, para CANCELAR la recuperación y volver
+      // al login normal), salimos también del modo recuperación.
+      if (event === 'SIGNED_OUT') setIsRecovery(false);
     });
 
     return () => sub.subscription.unsubscribe();
