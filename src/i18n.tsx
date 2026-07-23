@@ -296,6 +296,12 @@ export const translations = {
       pendientesNote:
         'Compras que se empezaron pero no se pagaron. No generan ningún cargo; puedes ignorarlas.',
       ordersEmptyPaid: 'Aún no tienes compras completadas.',
+      resendBtn: 'Reenviar por correo',
+      resendEmailLabel: 'Enviar a este correo',
+      resendSendBtn: 'Enviar',
+      resendCancel: 'Cancelar',
+      resendOk: '¡Listo! Revisa la bandeja de ese correo.',
+      resendError: 'No se pudo reenviar. Intenta de nuevo.',
       // Preferencias
       prefsNote: 'Decide qué correos quieres recibir de DONDOM STUDIO.',
       prefsSaved: '¡Listo! Preferencia guardada.',
@@ -598,6 +604,12 @@ export const translations = {
       pendientesNote:
         "Purchases that were started but never paid. They don't charge anything; you can ignore them.",
       ordersEmptyPaid: "You don't have completed purchases yet.",
+      resendBtn: 'Resend by email',
+      resendEmailLabel: 'Send to this email',
+      resendSendBtn: 'Send',
+      resendCancel: 'Cancel',
+      resendOk: 'Done! Check that inbox.',
+      resendError: "Couldn't resend. Try again.",
       prefsNote: 'Choose which emails you want from DONDOM STUDIO.',
       prefsSaved: 'Done! Preference saved.',
       ordersTitle: 'My orders',

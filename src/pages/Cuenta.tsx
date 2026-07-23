@@ -1,7 +1,7 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff, User, Package, Lock, Bell } from 'lucide-react';
+import { ArrowRight, LogOut, CheckCircle, Eye, EyeOff, User, Package, Lock, Bell, Mail } from 'lucide-react';
 import Header from '../components/Header';
 import { useLang } from '../i18n';
 import { useAuth, traducirErrorAuth } from '../auth';
@@ -101,6 +101,7 @@ interface Pedido {
   total_mxn: number;
   estado: string;
   creado_en: string;
+  correo: string; // para prellenar el correo al reenviar el resumen del pedido
 }
 
 export default function Cuenta() {
@@ -625,6 +626,49 @@ function CuentaPrivada({
   // ¿Mostrar también las compras que se quedaron sin pagar?
   const [verPendientes, setVerPendientes] = useState(false);
 
+  // Reenviar el resumen de un pedido a un correo (el que sea, no forzoso el
+  // que se usó al comprar) — útil si el cliente usó un correo por error.
+  const [reenviarAbierto, setReenviarAbierto] = useState<string | null>(null); // id del pedido abierto
+  const [reenviarEmail, setReenviarEmail] = useState('');
+  const [reenviarBusy, setReenviarBusy] = useState(false);
+  const [reenviarMsg, setReenviarMsg] = useState<{ id: string; ok: boolean; texto: string } | null>(null);
+
+  const abrirReenviar = (ped: Pedido) => {
+    if (reenviarAbierto === ped.id) {
+      setReenviarAbierto(null);
+      return;
+    }
+    setReenviarAbierto(ped.id);
+    setReenviarEmail(ped.correo || user.email || '');
+    setReenviarMsg(null);
+  };
+
+  const handleReenviar = async (orderId: string) => {
+    const email = reenviarEmail.trim();
+    if (!email) return;
+    setReenviarBusy(true);
+    setReenviarMsg(null);
+    try {
+      const { data: sesion } = await supabase.auth.getSession();
+      const token = sesion.session?.access_token;
+      const r = await fetch('/api/resend-order-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId, email }),
+      });
+      const json = await r.json();
+      setReenviarBusy(false);
+      if (!r.ok) {
+        setReenviarMsg({ id: orderId, ok: false, texto: json.error || t.cuenta.resendError });
+        return;
+      }
+      setReenviarMsg({ id: orderId, ok: true, texto: t.cuenta.resendOk });
+    } catch {
+      setReenviarBusy(false);
+      setReenviarMsg({ id: orderId, ok: false, texto: t.cuenta.resendError });
+    }
+  };
+
   // Preferencias: recibir (o no) correos de novedades
   const [marketing, setMarketing] = useState(false);
   const [savingPrefs, setSavingPrefs] = useState(false);
@@ -700,7 +744,7 @@ function CuentaPrivada({
     (async () => {
       const [{ data: p }, { data: ped }] = await Promise.all([
         supabase.from('perfiles').select('*').eq('id', user.id).maybeSingle(),
-        supabase.from('pedidos').select('id,total_mxn,estado,creado_en').order('creado_en', { ascending: false }),
+        supabase.from('pedidos').select('id,total_mxn,estado,creado_en,correo').order('creado_en', { ascending: false }),
       ]);
       if (!alive) return;
       if (p) {
@@ -758,29 +802,89 @@ function CuentaPrivada({
         ? 'text-brand-gray-400 border-brand-gray-300'
         : 'text-brand-black border-brand-black';
 
-  // Renglón de un pedido en la lista
-  const renderPedido = (ped: Pedido) => (
-    <div key={ped.id} className="px-5 py-4 flex flex-col gap-1.5">
-      <div className="flex justify-between items-center">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
-          #{ped.id.slice(0, 8)}
-        </span>
-        <span className="font-mono text-[11px] tracking-widest">
-          {formatMXN(Number(ped.total_mxn))}
-        </span>
+  // Renglón de un pedido en la lista (con la opción de reenviarlo por correo,
+  // solo para pedidos ya pagados — no tiene sentido en los "sin terminar")
+  const renderPedido = (ped: Pedido) => {
+    const puedeReenviar = ped.estado !== 'pendiente';
+    const abierto = reenviarAbierto === ped.id;
+    const msg = reenviarMsg && reenviarMsg.id === ped.id ? reenviarMsg : null;
+
+    return (
+      <div key={ped.id} className="px-5 py-4 flex flex-col gap-1.5">
+        <div className="flex justify-between items-center">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
+            #{ped.id.slice(0, 8)}
+          </span>
+          <span className="font-mono text-[11px] tracking-widest">
+            {formatMXN(Number(ped.total_mxn))}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+            {fmtDate(ped.creado_en)}
+          </span>
+          <span
+            className={`font-mono text-[8px] uppercase tracking-widest border px-2 py-0.5 ${estadoEstilo(ped.estado)}`}
+          >
+            {estadoTexto(ped.estado)}
+          </span>
+        </div>
+
+        {puedeReenviar && (
+          <div className="mt-1.5">
+            <button
+              type="button"
+              onClick={() => abrirReenviar(ped)}
+              className="flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+            >
+              <Mail className="w-3 h-3 shrink-0" />
+              {t.cuenta.resendBtn}
+            </button>
+
+            {abierto && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 flex flex-col gap-2 border border-brand-gray-200 p-3"
+              >
+                <label className="font-mono text-[8px] uppercase tracking-widest text-brand-gray-400">
+                  {t.cuenta.resendEmailLabel}
+                </label>
+                <input
+                  type="email"
+                  value={reenviarEmail}
+                  onChange={(e) => setReenviarEmail(e.target.value)}
+                  className="w-full border border-brand-gray-300 px-3 py-2 font-mono text-[12px] normal-case tracking-normal focus:outline-none focus:border-brand-blue transition-colors bg-brand-white"
+                />
+                <div className="flex items-center gap-3 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => handleReenviar(ped.id)}
+                    disabled={reenviarBusy || !reenviarEmail.trim()}
+                    className="bg-brand-blue text-white font-mono text-[9px] uppercase tracking-widest px-4 py-2 hover:bg-brand-black transition-colors disabled:opacity-60"
+                  >
+                    {reenviarBusy ? t.cuenta.processing : t.cuenta.resendSendBtn}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReenviarAbierto(null)}
+                    className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+                  >
+                    {t.cuenta.resendCancel}
+                  </button>
+                </div>
+                {msg && (
+                  <p className={`font-mono text-[8px] uppercase tracking-widest mt-1 ${msg.ok ? 'text-brand-blue' : 'text-red-500'}`}>
+                    {msg.texto}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
-      <div className="flex justify-between items-center">
-        <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
-          {fmtDate(ped.creado_en)}
-        </span>
-        <span
-          className={`font-mono text-[8px] uppercase tracking-widest border px-2 py-0.5 ${estadoEstilo(ped.estado)}`}
-        >
-          {estadoTexto(ped.estado)}
-        </span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const TABS = [
     { id: 'datos', label: t.cuenta.tabDatos, Icon: User },
