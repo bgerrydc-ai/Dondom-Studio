@@ -29,6 +29,7 @@ interface AuthValue {
     extra?: { acepta_marketing: boolean; acepto_terminos: boolean },
   ) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   // Recuperación de contraseña:
   resetPassword: (email: string) => Promise<{ error: string | null }>;
@@ -157,6 +158,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error ? error.message : null };
   };
 
+  // Inicia sesión (o crea la cuenta, si es la primera vez) con Google.
+  // Supabase se encarga de todo: manda al usuario a la pantalla de Google
+  // y, al terminar, regresa a nuestra página ya con la sesión iniciada.
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/cuenta` },
+    });
+    return { error: error ? error.message : null };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
@@ -178,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, loading, signUp, signIn, signOut, resetPassword, updatePassword, isRecovery }}
+      value={{ user, session, loading, signUp, signIn, signInWithGoogle, signOut, resetPassword, updatePassword, isRecovery }}
     >
       {children}
     </AuthContext.Provider>
