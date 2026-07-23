@@ -32,9 +32,10 @@ const EMPTY: ShippingData = {
   ciudad: '', municipio: '', estado: '', notas: '',
 };
 
-// Estilo compartido de las casillas
+// Estilo compartido de las casillas. Sin mayúsculas forzadas: el cliente ve
+// exactamente lo que escribe (más claro para revisar su propia dirección).
 const inputBase =
-  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[13px] normal-case tracking-normal placeholder:text-brand-gray-400 placeholder:normal-case focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
 
 // Casilla reutilizable (definida FUERA del componente para no perder el foco al escribir)
 type FieldProps = {
@@ -46,9 +47,13 @@ type FieldProps = {
   type?: string;
   required?: boolean;
   full?: boolean;
+  inputMode?: 'numeric' | 'text' | 'tel' | 'email';
+  maxLength?: number;
 };
 
-function Field({ label, name, value, onChange, placeholder, type = 'text', required = false, full = false }: FieldProps) {
+function Field({
+  label, name, value, onChange, placeholder, type = 'text', required = false, full = false, inputMode, maxLength,
+}: FieldProps) {
   return (
     <div className={full ? 'sm:col-span-2' : ''}>
       <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
@@ -61,6 +66,8 @@ function Field({ label, name, value, onChange, placeholder, type = 'text', requi
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        inputMode={inputMode}
+        maxLength={maxLength}
         className={inputBase}
       />
     </div>
@@ -78,6 +85,7 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [errMsg, setErrMsg] = useState('');
+  const [cpAuto, setCpAuto] = useState(false); // true si ya sugerimos colonia/estado
 
   // Si el cliente tiene sesión iniciada, llenamos el formulario con sus
   // datos guardados (perfil) para que compre más rápido.
@@ -129,6 +137,37 @@ export default function Checkout() {
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  // Cuando el código postal tiene 5 dígitos, sugerimos Colonia y Estado con
+  // un servicio público (gratuito). Es solo una AYUDA: si el cliente ya
+  // escribió algo en esas casillas, no lo tocamos — y siempre puede
+  // corregirlo, porque un mismo C.P. puede tener varias colonias reales.
+  useEffect(() => {
+    const cp = form.cp.trim();
+    setCpAuto(false);
+    if (!/^\d{5}$/.test(cp)) return;
+    let cancelado = false;
+    (async () => {
+      try {
+        const r = await fetch(`https://api.zippopotam.us/mx/${cp}`);
+        if (!r.ok || cancelado) return;
+        const data = await r.json();
+        const lugar = data.places?.[0];
+        if (!lugar || cancelado) return;
+        setForm((prev) => ({
+          ...prev,
+          colonia: prev.colonia || lugar['place name'] || prev.colonia,
+          estado: prev.estado || lugar.state || prev.estado,
+        }));
+        setCpAuto(true);
+      } catch {
+        // Sin conexión al servicio: el cliente sigue llenando a mano, sin problema.
+      }
+    })();
+    return () => {
+      cancelado = true;
+    };
+  }, [form.cp]);
 
   const handlePlaceOrder = async (e: FormEvent) => {
     e.preventDefault();
@@ -296,9 +335,16 @@ export default function Checkout() {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field label={t.checkout.street} name="calle" value={form.calle} onChange={handleChange} required full />
-                  <Field label={t.checkout.extNum} name="noExt" value={form.noExt} onChange={handleChange} required />
-                  <Field label={t.checkout.intNum} name="noInt" value={form.noInt} onChange={handleChange} />
-                  <Field label={t.checkout.zip} name="cp" value={form.cp} onChange={handleChange} required />
+                  <Field label={t.checkout.extNum} name="noExt" value={form.noExt} onChange={handleChange} required inputMode="numeric" />
+                  <Field label={t.checkout.intNum} name="noInt" value={form.noInt} onChange={handleChange} inputMode="numeric" />
+                  <div>
+                    <Field label={t.checkout.zip} name="cp" value={form.cp} onChange={handleChange} required inputMode="numeric" maxLength={5} />
+                    {cpAuto && (
+                      <p className="font-mono text-[8px] uppercase tracking-widest text-brand-blue mt-1">
+                        {t.checkout.cpAutoNote}
+                      </p>
+                    )}
+                  </div>
                   <Field label={t.checkout.colonia} name="colonia" value={form.colonia} onChange={handleChange} required />
                   <Field label={t.checkout.city} name="ciudad" value={form.ciudad} onChange={handleChange} required />
                   <Field label={t.checkout.municipio} name="municipio" value={form.municipio} onChange={handleChange} required />
