@@ -1,26 +1,30 @@
 import Stripe from 'stripe';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// WEBHOOK DE STRIPE — Marca el pedido como "pagado" y manda el correo
-// de confirmación al cliente, automáticamente.
+// WEBHOOK DE STRIPE — Marca el pedido como "pagado" y manda DOS correos:
+// uno de confirmación al cliente, y un aviso de "nueva venta" a Gerardo.
 // ─────────────────────────────────────────────────────────────────────────────
 // Stripe llama a esta función cuando un pago se completa. Aquí verificamos que
 // de verdad viene de Stripe (con la firma), actualizamos el pedido en Supabase
-// y le mandamos al cliente un correo con su resumen de compra.
+// y mandamos los correos.
 //
 // Variables de entorno necesarias en Vercel:
 //   • STRIPE_SECRET_KEY          (la misma llave secreta de Stripe)
 //   • STRIPE_WEBHOOK_SECRET      (el "Signing secret" del webhook, empieza con whsec_)
 //   • SUPABASE_SERVICE_ROLE_KEY  (llave secreta de Supabase, SOLO vive aquí en el servidor)
-//   • RESEND_API_KEY             (llave de Resend para mandar el correo, empieza con re_)
-//     Si no está configurada, el pedido se marca "pagado" igual — solo no se
-//     manda el correo de marca (el recibo de Stripe puede seguir activo aparte).
+//   • RESEND_API_KEY             (llave de Resend, empieza con re_). Si falta, se
+//     omiten los DOS correos (el pedido se marca pagado de todas formas).
+//   • SELLER_EMAIL                (opcional) correo donde Gerardo recibe el aviso
+//     de "nueva venta". Si falta, se omite solo ese correo (el del cliente sí sale).
 //
-// IMPORTANTE (mientras no haya dominio propio verificado en Resend): el correo
-// solo se puede mandar a la cuenta con la que se creó Resend (por ahora
-// Dondommanagment@gmail.com). En cuanto se verifique un dominio propio en
-// Resend, este mismo código empieza a mandarle el correo a CUALQUIER cliente
-// sin tocar nada más.
+// IMPORTANTE (mientras no haya dominio propio verificado en Resend): con el
+// remitente de prueba (onboarding@resend.dev), Resend SOLO deja mandar correos
+// a la cuenta con la que se creó Resend. Por eso, para las pruebas de HOY,
+// tanto el correo del cliente como SELLER_EMAIL deben ser esa misma cuenta
+// (bgerrydc@gmail.com). En cuanto haya un dominio propio verificado en Resend,
+// este mismo código funciona para cualquier cliente y para el correo real del
+// negocio (Dondommanagment@gmail.com), sin tocar nada más — solo hay que
+// actualizar SELLER_EMAIL en Vercel.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SUPABASE_URL = 'https://atfxlrsufenzchkjbiwe.supabase.co';
@@ -43,9 +47,9 @@ function formatMXN(amount) {
   });
 }
 
-// Arma el HTML del correo de confirmación (estilo simple, con el azul de la marca)
-function armarCorreoHTML({ pedido, items }) {
-  const filas = items
+// Filas de la tabla de productos, compartidas por los dos correos
+function filasProductosHTML(items) {
+  return items
     .map(
       (it) => `
         <tr>
@@ -59,7 +63,10 @@ function armarCorreoHTML({ pedido, items }) {
         </tr>`,
     )
     .join('');
+}
 
+// Armazón compartido del correo (cabecera azul + tabla + total)
+function plantillaCorreoHTML({ tituloEncabezado, textoIntro, pedido, items, extra = '' }) {
   return `
   <div style="background:#f2f2f2;padding:32px 16px;font-family:Arial,sans-serif;">
     <div style="max-width:480px;margin:0 auto;background:#ffffff;border:1px solid #e5e5e5;">
@@ -67,13 +74,12 @@ function armarCorreoHTML({ pedido, items }) {
         <span style="color:#fff;font-weight:800;letter-spacing:2px;font-size:14px;">DONDOM STUDIO</span>
       </div>
       <div style="padding:28px;">
-        <h1 style="font-size:22px;margin:0 0 8px;">¡Gracias por tu compra!</h1>
+        <h1 style="font-size:22px;margin:0 0 8px;">${tituloEncabezado}</h1>
         <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 24px;">
-          Confirmamos tu pago. Aquí está el resumen de tu pedido
-          <strong>#${pedido.id.slice(0, 8).toUpperCase()}</strong>.
+          ${textoIntro} <strong>#${pedido.id.slice(0, 8).toUpperCase()}</strong>.
         </p>
         <table style="width:100%;border-collapse:collapse;">
-          ${filas}
+          ${filasProductosHTML(items)}
         </table>
         <table style="width:100%;margin-top:12px;">
           <tr>
@@ -89,67 +95,135 @@ function armarCorreoHTML({ pedido, items }) {
           </p>
           <p style="font-size:12px;color:#333;line-height:1.6;margin:0;">${pedido.direccion || '—'}</p>
         </div>
-        <p style="font-size:11px;color:#888;margin-top:28px;line-height:1.6;">
-          Te avisaremos cuando tu pedido salga a reparto. Si tienes dudas, contáctanos
-          respondiendo este correo.
-        </p>
+        ${extra}
       </div>
     </div>
   </div>`;
 }
 
-// Manda el correo de confirmación por Resend. Si algo falla, no truena el
-// webhook — el pedido ya quedó marcado "pagado", que es lo importante.
-async function mandarCorreoConfirmacion(orderId, serviceRole) {
+function correoClienteHTML({ pedido, items }) {
+  return plantillaCorreoHTML({
+    tituloEncabezado: '¡Gracias por tu compra!',
+    textoIntro: 'Confirmamos tu pago. Aquí está el resumen de tu pedido',
+    pedido,
+    items,
+    extra: `
+        <p style="font-size:11px;color:#888;margin-top:28px;line-height:1.6;">
+          Te avisaremos cuando tu pedido salga a reparto. Si tienes dudas, contáctanos
+          respondiendo este correo.
+        </p>`,
+  });
+}
+
+function correoVendedorHTML({ pedido, items }) {
+  return plantillaCorreoHTML({
+    tituloEncabezado: '¡Tienes una venta nueva! 🎉',
+    textoIntro: 'Se pagó el pedido',
+    pedido,
+    items,
+    extra: `
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid #eee;">
+          <p style="font-family:monospace;font-size:10px;text-transform:uppercase;color:#888;margin:0 0 6px;">
+            Contacto del cliente
+          </p>
+          <p style="font-size:12px;color:#333;line-height:1.6;margin:0;">
+            ${pedido.nombre || '—'}<br/>${pedido.correo || '—'}${pedido.telefono ? `<br/>${pedido.telefono}` : ''}
+          </p>
+        </div>`,
+  });
+}
+
+// Trae el pedido y sus productos desde Supabase (una sola vez, para los dos correos)
+async function obtenerDetallePedido(orderId, serviceRole) {
+  const headersSupabase = { apikey: serviceRole, Authorization: `Bearer ${serviceRole}` };
+
+  const [rPedido, rItems] = await Promise.all([
+    fetch(
+      `${SUPABASE_URL}/rest/v1/pedidos?id=eq.${orderId}&select=id,nombre,correo,telefono,direccion,total_mxn`,
+      { headers: headersSupabase },
+    ),
+    fetch(
+      `${SUPABASE_URL}/rest/v1/pedido_items?pedido_id=eq.${orderId}&select=nombre,size,cantidad,precio_unitario_mxn`,
+      { headers: headersSupabase },
+    ),
+  ]);
+
+  const pedidos = await rPedido.json();
+  const items = await rItems.json();
+  const pedido = Array.isArray(pedidos) ? pedidos[0] : null;
+
+  if (!pedido || !Array.isArray(items) || items.length === 0) return null;
+  return { pedido, items };
+}
+
+async function enviarPorResend({ resendKey, from, to, replyTo, subject, html }) {
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${resendKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ from, to, reply_to: replyTo, subject, html }),
+  });
+  if (!r.ok) {
+    const detalle = await r.text();
+    console.error(`Resend no aceptó el correo para ${to}:`, r.status, detalle);
+  }
+}
+
+// Manda el correo del cliente y, si SELLER_EMAIL está configurado, el aviso de
+// venta a Gerardo. Nunca truena el webhook — el pedido ya quedó "pagado".
+async function mandarCorreos(orderId, serviceRole) {
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
-    console.log('RESEND_API_KEY no configurada: se omite el correo de confirmación.');
+    console.log('RESEND_API_KEY no configurada: se omiten los correos.');
     return;
   }
 
   try {
-    const headersSupabase = { apikey: serviceRole, Authorization: `Bearer ${serviceRole}` };
-
-    const [rPedido, rItems] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${orderId}&select=id,correo,direccion,total_mxn`, {
-        headers: headersSupabase,
-      }),
-      fetch(
-        `${SUPABASE_URL}/rest/v1/pedido_items?pedido_id=eq.${orderId}&select=nombre,size,cantidad,precio_unitario_mxn`,
-        { headers: headersSupabase },
-      ),
-    ]);
-
-    const pedidos = await rPedido.json();
-    const items = await rItems.json();
-    const pedido = Array.isArray(pedidos) ? pedidos[0] : null;
-
-    if (!pedido || !pedido.correo || !Array.isArray(items) || items.length === 0) {
+    const detalle = await obtenerDetallePedido(orderId, serviceRole);
+    if (!detalle) {
       console.error('No se pudo armar el correo: faltan datos del pedido', orderId);
       return;
     }
+    const { pedido, items } = detalle;
+    const folio = pedido.id.slice(0, 8).toUpperCase();
 
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'DONDOM STUDIO <onboarding@resend.dev>',
-        to: pedido.correo,
-        reply_to: 'Dondommanagment@gmail.com',
-        subject: `Confirmamos tu pago — Pedido #${pedido.id.slice(0, 8).toUpperCase()}`,
-        html: armarCorreoHTML({ pedido, items }),
-      }),
-    });
+    const tareas = [];
 
-    if (!r.ok) {
-      const detalle = await r.text();
-      console.error('Resend no aceptó el correo:', r.status, detalle);
+    // Correo al cliente (si dejó su correo al comprar)
+    if (pedido.correo) {
+      tareas.push(
+        enviarPorResend({
+          resendKey,
+          from: 'DONDOM STUDIO <onboarding@resend.dev>',
+          to: pedido.correo,
+          replyTo: 'Dondommanagment@gmail.com',
+          subject: `Confirmamos tu pago — Pedido #${folio}`,
+          html: correoClienteHTML({ pedido, items }),
+        }),
+      );
     }
+
+    // Aviso de venta a Gerardo (solo si configuró SELLER_EMAIL en Vercel)
+    const sellerEmail = process.env.SELLER_EMAIL;
+    if (sellerEmail) {
+      tareas.push(
+        enviarPorResend({
+          resendKey,
+          from: 'DONDOM STUDIO <onboarding@resend.dev>',
+          to: sellerEmail,
+          subject: `Nueva venta — Pedido #${folio} — ${formatMXN(pedido.total_mxn)}`,
+          html: correoVendedorHTML({ pedido, items }),
+        }),
+      );
+    } else {
+      console.log('SELLER_EMAIL no configurada: se omite el aviso de venta.');
+    }
+
+    await Promise.all(tareas);
   } catch (e) {
-    console.error('Error mandando el correo de confirmación:', e);
+    console.error('Error mandando los correos del pedido:', e);
   }
 }
 
@@ -211,9 +285,9 @@ export default async function handler(req, res) {
         return;
       }
 
-      // 3) Ya marcado como pagado: mandamos el correo de confirmación.
-      // No bloqueamos la respuesta a Stripe por esto ni la hacemos fallar.
-      await mandarCorreoConfirmacion(orderId, serviceRole);
+      // 3) Ya marcado como pagado: mandamos el correo al cliente y el aviso
+      // de venta a Gerardo. No bloqueamos ni hacemos fallar la respuesta a Stripe.
+      await mandarCorreos(orderId, serviceRole);
     }
   }
 
