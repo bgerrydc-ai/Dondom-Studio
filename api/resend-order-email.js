@@ -79,7 +79,7 @@ export default async function handler(req, res) {
 
     const enviado = await enviarPorResend({
       resendKey,
-      from: 'DONDOM STUDIO <onboarding@resend.dev>',
+      from: 'DONDOM STUDIO <contacto@dondomstudio.com>',
       to: email,
       replyTo: 'Dondommanagment@gmail.com',
       subject: `Tu pedido — #${pedido.id.slice(0, 8).toUpperCase()}`,

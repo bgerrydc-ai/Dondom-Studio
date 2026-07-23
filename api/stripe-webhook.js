@@ -18,14 +18,8 @@ import { formatMXN, correoClienteHTML, correoVendedorHTML, enviarPorResend } fro
 //   • SELLER_EMAIL                (opcional) correo donde Gerardo recibe el aviso
 //     de "nueva venta". Si falta, se omite solo ese correo (el del cliente sí sale).
 //
-// IMPORTANTE (mientras no haya dominio propio verificado en Resend): con el
-// remitente de prueba (onboarding@resend.dev), Resend SOLO deja mandar correos
-// a la cuenta con la que se creó Resend. Por eso, para las pruebas de HOY,
-// tanto el correo del cliente como SELLER_EMAIL deben ser esa misma cuenta
-// (bgerrydc@gmail.com). En cuanto haya un dominio propio verificado en Resend,
-// este mismo código funciona para cualquier cliente y para el correo real del
-// negocio (Dondommanagment@gmail.com), sin tocar nada más — solo hay que
-// actualizar SELLER_EMAIL en Vercel.
+// Los correos salen de contacto@dondomstudio.com (dominio propio verificado
+// en Resend) — funciona para cualquier cliente real, no solo para pruebas.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SUPABASE_URL = 'https://atfxlrsufenzchkjbiwe.supabase.co';
@@ -89,7 +83,7 @@ async function mandarCorreos(orderId, serviceRole) {
       tareas.push(
         enviarPorResend({
           resendKey,
-          from: 'DONDOM STUDIO <onboarding@resend.dev>',
+          from: 'DONDOM STUDIO <contacto@dondomstudio.com>',
           to: pedido.correo,
           replyTo: 'Dondommanagment@gmail.com',
           subject: `Confirmamos tu pago — Pedido #${folio}`,
@@ -104,7 +98,7 @@ async function mandarCorreos(orderId, serviceRole) {
       tareas.push(
         enviarPorResend({
           resendKey,
-          from: 'DONDOM STUDIO <onboarding@resend.dev>',
+          from: 'DONDOM STUDIO <contacto@dondomstudio.com>',
           to: sellerEmail,
           subject: `Nueva venta — Pedido #${folio} — ${formatMXN(pedido.total_mxn)}`,
           html: correoVendedorHTML({ pedido, items }),
