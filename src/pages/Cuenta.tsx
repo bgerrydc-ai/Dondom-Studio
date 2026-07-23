@@ -11,7 +11,7 @@ import { usePageTitle } from '../usePageTitle';
 
 // Estilo compartido de las casillas
 const inputBase =
-  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+  'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[13px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
 
 // Estilo para correo y contraseña: SIN mayúsculas forzadas, para que se vea
 // tal cual lo escribes (importante: la contraseña distingue may/minúsculas).
@@ -68,7 +68,7 @@ type FieldProps = {
 function Field({ label, name, value, onChange, type = 'text', full = false }: FieldProps) {
   return (
     <div className={full ? 'sm:col-span-2' : ''}>
-      <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+      <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
         {label}
       </label>
       <input type={type} name={name} value={value} onChange={onChange} className={inputBase} />
@@ -218,7 +218,7 @@ export default function Cuenta() {
       <div className="min-h-screen bg-brand-white">
         <Header />
         <main className="max-w-[1000px] mx-auto px-8 py-24 text-center">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
             {t.common.loading}
           </p>
         </main>
@@ -237,12 +237,12 @@ export default function Cuenta() {
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
             {t.cuenta.newPassTitle}
           </h1>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
             {t.cuenta.newPassSub}
           </p>
           <form onSubmit={handleNewPassword} className="flex flex-col gap-5">
             <div>
-              <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+              <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                 {t.cuenta.newPassLabel}
               </label>
               <PasswordInput
@@ -254,14 +254,14 @@ export default function Cuenta() {
               />
             </div>
             {recoveryMsg && (
-              <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-red-500">
                 {recoveryMsg}
               </p>
             )}
             <button
               type="submit"
               disabled={recoveryBusy}
-              className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+              className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
             >
               <span>{recoveryBusy ? t.cuenta.processing : t.cuenta.newPassBtn}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -272,7 +272,7 @@ export default function Cuenta() {
           <button
             type="button"
             onClick={() => signOut()}
-            className="mt-6 font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+            className="mt-6 font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
           >
             ← {t.cuenta.cancelRecovery}
           </button>
@@ -292,7 +292,7 @@ export default function Cuenta() {
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
             {t.cuenta.resetTitle}
           </h1>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
             {t.cuenta.resetSub}
           </p>
 
@@ -303,14 +303,14 @@ export default function Cuenta() {
               className="border border-brand-blue p-6 flex flex-col items-center gap-4 text-center"
             >
               <CheckCircle className="w-10 h-10 text-brand-blue" />
-              <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+              <p className="font-mono text-[12px] uppercase tracking-widest leading-relaxed">
                 {t.cuenta.resetSent}
               </p>
             </motion.div>
           ) : (
             <form onSubmit={handleReset} className="flex flex-col gap-5">
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.email}
                 </label>
                 <input
@@ -323,14 +323,14 @@ export default function Cuenta() {
                 />
               </div>
               {authMsg && (
-                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-red-500">
                   {authMsg}
                 </p>
               )}
               <button
                 type="submit"
                 disabled={authBusy}
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
                 <span>{authBusy ? t.cuenta.processing : t.cuenta.resetBtn}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -345,7 +345,7 @@ export default function Cuenta() {
               setAuthMsg('');
               setResetSent(false);
             }}
-            className="mt-6 font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+            className="mt-6 font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
           >
             ← {t.cuenta.backToLogin}
           </button>
@@ -375,7 +375,7 @@ export default function Cuenta() {
                 setModo('login');
                 setAuthMsg('');
               }}
-              className={`flex-1 font-mono text-[10px] uppercase tracking-widest py-4 transition-colors ${
+              className={`flex-1 font-mono text-[12px] uppercase tracking-widest py-4 transition-colors ${
                 modo === 'login'
                   ? 'bg-brand-black text-brand-white'
                   : 'text-brand-gray-400 hover:text-brand-black'
@@ -389,7 +389,7 @@ export default function Cuenta() {
                 setModo('signup');
                 setAuthMsg('');
               }}
-              className={`flex-1 font-mono text-[10px] uppercase tracking-widest py-4 transition-colors border-l border-brand-gray-300 ${
+              className={`flex-1 font-mono text-[12px] uppercase tracking-widest py-4 transition-colors border-l border-brand-gray-300 ${
                 modo === 'signup'
                   ? 'bg-brand-blue text-brand-white'
                   : 'text-brand-gray-400 hover:text-brand-black'
@@ -404,7 +404,7 @@ export default function Cuenta() {
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3">
               {isSignup ? t.cuenta.signupHeading : t.cuenta.loginHeading}
             </h1>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-8 leading-relaxed">
               {isSignup ? t.cuenta.signupSub : t.cuenta.loginSub}
             </p>
           </motion.div>
@@ -416,14 +416,14 @@ export default function Cuenta() {
               animate={{ opacity: 1, y: 0 }}
               className="border border-brand-blue bg-brand-blue/5 p-6 mb-8"
             >
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-blue font-bold mb-4">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-blue font-bold mb-4">
                 {t.cuenta.benefitsTitle}
               </p>
               <ul className="flex flex-col gap-3">
                 {[t.cuenta.benefit1, t.cuenta.benefit2, t.cuenta.benefit3].map((b) => (
                   <li key={b} className="flex items-start gap-3">
                     <CheckCircle className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
-                    <span className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+                    <span className="font-mono text-[12px] uppercase tracking-widest leading-relaxed">
                       {b}
                     </span>
                   </li>
@@ -438,7 +438,7 @@ export default function Cuenta() {
                 type="button"
                 onClick={handleGoogle}
                 disabled={googleBusy}
-                className="w-full flex items-center justify-center gap-3 border border-brand-gray-300 font-mono text-[10px] uppercase tracking-widest py-4 hover:border-brand-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 border border-brand-gray-300 font-mono text-[12px] uppercase tracking-widest py-4 hover:border-brand-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0">
                   <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" />
@@ -448,12 +448,12 @@ export default function Cuenta() {
                 </svg>
                 {googleBusy ? t.cuenta.processing : t.cuenta.googleBtn}
               </button>
-              <p className="font-mono text-[8px] uppercase tracking-widest text-brand-gray-400 text-center leading-relaxed mt-3">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 text-center leading-relaxed mt-3">
                 {t.cuenta.googleTermsNote}
               </p>
               <div className="flex items-center gap-4 mt-6">
                 <div className="flex-1 h-px bg-brand-gray-200" />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                   {t.cuenta.orDivider}
                 </span>
                 <div className="flex-1 h-px bg-brand-gray-200" />
@@ -468,7 +468,7 @@ export default function Cuenta() {
               className="border border-brand-blue p-6 flex flex-col items-center gap-4 text-center"
             >
               <CheckCircle className="w-10 h-10 text-brand-blue" />
-              <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+              <p className="font-mono text-[12px] uppercase tracking-widest leading-relaxed">
                 {t.cuenta.confirmEmail}
               </p>
             </motion.div>
@@ -480,7 +480,7 @@ export default function Cuenta() {
               className="flex flex-col gap-5"
             >
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.email}
                 </label>
                 <input
@@ -493,7 +493,7 @@ export default function Cuenta() {
                 />
               </div>
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.password}
                 </label>
                 <PasswordInput
@@ -511,7 +511,7 @@ export default function Cuenta() {
                       setModo('reset');
                       setAuthMsg('');
                     }}
-                    className="mt-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue hover:underline"
+                    className="mt-2 font-mono text-[11px] uppercase tracking-widest text-brand-blue hover:underline"
                   >
                     {t.cuenta.forgotLink}
                   </button>
@@ -529,7 +529,7 @@ export default function Cuenta() {
                       onChange={(e) => setAceptaTerminos(e.target.checked)}
                       className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
                     />
-                    <span className="font-mono text-[9px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+                    <span className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
                       {t.cuenta.termsPre}{' '}
                       <a
                         href="/terminos"
@@ -560,7 +560,7 @@ export default function Cuenta() {
                       onChange={(e) => setAceptaMarketing(e.target.checked)}
                       className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
                     />
-                    <span className="font-mono text-[9px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+                    <span className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
                       {t.cuenta.marketingLabel}
                     </span>
                   </label>
@@ -568,7 +568,7 @@ export default function Cuenta() {
               )}
 
               {authMsg && (
-                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-red-500">
                   {authMsg}
                 </p>
               )}
@@ -576,7 +576,7 @@ export default function Cuenta() {
               <button
                 type="submit"
                 disabled={authBusy}
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
                 <span>
                   {authBusy
@@ -812,19 +812,19 @@ function CuentaPrivada({
     return (
       <div key={ped.id} className="px-5 py-4 flex flex-col gap-1.5">
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
+          <span className="font-mono text-[12px] font-bold uppercase tracking-widest">
             #{ped.id.slice(0, 8)}
           </span>
-          <span className="font-mono text-[11px] tracking-widest">
+          <span className="font-mono text-[13px] tracking-widest">
             {formatMXN(Number(ped.total_mxn))}
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
             {fmtDate(ped.creado_en)}
           </span>
           <span
-            className={`font-mono text-[8px] uppercase tracking-widest border px-2 py-0.5 ${estadoEstilo(ped.estado)}`}
+            className={`font-mono text-[10px] uppercase tracking-widest border px-2 py-0.5 ${estadoEstilo(ped.estado)}`}
           >
             {estadoTexto(ped.estado)}
           </span>
@@ -835,7 +835,7 @@ function CuentaPrivada({
             <button
               type="button"
               onClick={() => abrirReenviar(ped)}
-              className="flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+              className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
             >
               <Mail className="w-3 h-3 shrink-0" />
               {t.cuenta.resendBtn}
@@ -847,7 +847,7 @@ function CuentaPrivada({
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-3 flex flex-col gap-2 border border-brand-gray-200 p-3"
               >
-                <label className="font-mono text-[8px] uppercase tracking-widest text-brand-gray-400">
+                <label className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
                   {t.cuenta.resendEmailLabel}
                 </label>
                 <input
@@ -861,20 +861,20 @@ function CuentaPrivada({
                     type="button"
                     onClick={() => handleReenviar(ped.id)}
                     disabled={reenviarBusy || !reenviarEmail.trim()}
-                    className="bg-brand-blue text-white font-mono text-[9px] uppercase tracking-widest px-4 py-2 hover:bg-brand-black transition-colors disabled:opacity-60"
+                    className="bg-brand-blue text-white font-mono text-[11px] uppercase tracking-widest px-4 py-2 hover:bg-brand-black transition-colors disabled:opacity-60"
                   >
                     {reenviarBusy ? t.cuenta.processing : t.cuenta.resendSendBtn}
                   </button>
                   <button
                     type="button"
                     onClick={() => setReenviarAbierto(null)}
-                    className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+                    className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
                   >
                     {t.cuenta.resendCancel}
                   </button>
                 </div>
                 {msg && (
-                  <p className={`font-mono text-[8px] uppercase tracking-widest mt-1 ${msg.ok ? 'text-brand-blue' : 'text-red-500'}`}>
+                  <p className={`font-mono text-[10px] uppercase tracking-widest mt-1 ${msg.ok ? 'text-brand-blue' : 'text-red-500'}`}>
                     {msg.texto}
                   </p>
                 )}
@@ -899,7 +899,7 @@ function CuentaPrivada({
       <main className="max-w-[1000px] mx-auto px-8 py-16">
         {/* Encabezado */}
         <div className="mb-10 border-b border-brand-black pb-8">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-2">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-2">
             {t.cuenta.greeting}, {user.email}
           </p>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">
@@ -918,7 +918,7 @@ function CuentaPrivada({
                   key={id}
                   type="button"
                   onClick={() => setTab(id)}
-                  className={`flex items-center gap-3 px-4 py-3.5 font-mono text-[10px] uppercase tracking-widest transition-colors text-left border-l-2 ${
+                  className={`flex items-center gap-3 px-4 py-3.5 font-mono text-[12px] uppercase tracking-widest transition-colors text-left border-l-2 ${
                     tab === id
                       ? 'border-brand-blue bg-brand-gray-100 text-brand-black font-bold'
                       : 'border-transparent text-brand-gray-400 hover:text-brand-black hover:bg-brand-gray-100'
@@ -933,7 +933,7 @@ function CuentaPrivada({
             {/* Cerrar sesión */}
             <button
               onClick={signOut}
-              className="w-full mt-4 flex items-center gap-3 px-4 py-3.5 font-mono text-[10px] uppercase tracking-widest border border-brand-gray-300 text-brand-gray-400 hover:border-brand-black hover:text-brand-black transition-colors"
+              className="w-full mt-4 flex items-center gap-3 px-4 py-3.5 font-mono text-[12px] uppercase tracking-widest border border-brand-gray-300 text-brand-gray-400 hover:border-brand-black hover:text-brand-black transition-colors"
             >
               <LogOut className="w-4 h-4 shrink-0" />
               {t.cuenta.signOut}
@@ -954,7 +954,7 @@ function CuentaPrivada({
         {/* ══ SECCIÓN: MIS DATOS ══ */}
         {tab === 'datos' && (
           <form onSubmit={handleSaveProfile} className="max-w-2xl">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-5">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-5">
               {t.cuenta.profileNote}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -975,7 +975,7 @@ function CuentaPrivada({
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
               >
                 <span>{savingProfile ? t.cuenta.saving : t.cuenta.saveProfile}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -988,14 +988,14 @@ function CuentaPrivada({
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-5 border border-brand-blue p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
-                  <span className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-brand-blue">
+                  <span className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-widest text-brand-blue">
                     <CheckCircle className="w-5 h-5 shrink-0" />
                     {t.cuenta.profileSaved}
                   </span>
                   <button
                     type="button"
                     onClick={() => navigate('/tienda')}
-                    className="flex items-center justify-center gap-2 bg-brand-black text-brand-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-blue hover:text-white transition-colors shrink-0"
+                    className="flex items-center justify-center gap-2 bg-brand-black text-brand-white font-mono text-[12px] uppercase tracking-widest px-6 py-3 hover:bg-brand-blue hover:text-white transition-colors shrink-0"
                   >
                     {t.cuenta.goShop}
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -1010,20 +1010,20 @@ function CuentaPrivada({
         {tab === 'pedidos' && (
           <div className="max-w-2xl">
             {loadingData ? (
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                 {t.common.loading}
               </p>
             ) : (
               <>
                 {pedidosReales.length === 0 ? (
                   <div className="flex flex-col items-start gap-5">
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                       {t.cuenta.ordersEmptyPaid}
                     </p>
                     <button
                       type="button"
                       onClick={() => navigate('/tienda')}
-                      className="flex items-center gap-2 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-brand-black transition-colors"
+                      className="flex items-center gap-2 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-6 py-3 hover:bg-brand-black transition-colors"
                     >
                       {t.cuenta.goShop}
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -1041,13 +1041,13 @@ function CuentaPrivada({
                     <button
                       type="button"
                       onClick={() => setVerPendientes((v) => !v)}
-                      className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black border border-brand-gray-300 px-4 py-2.5 transition-colors"
+                      className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black border border-brand-gray-300 px-4 py-2.5 transition-colors"
                     >
                       {verPendientes ? t.cuenta.ocultarPendientes : t.cuenta.verPendientes} ({pendientes.length})
                     </button>
                     {verPendientes && (
                       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 leading-relaxed mt-4 mb-4 max-w-md">
+                        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 leading-relaxed mt-4 mb-4 max-w-md">
                           {t.cuenta.pendientesNote}
                         </p>
                         <div className="border border-brand-gray-200 divide-y divide-brand-gray-200 opacity-60">
@@ -1068,7 +1068,7 @@ function CuentaPrivada({
             <form onSubmit={handleCambiarPass}>
               {/* Contraseña actual (obligatoria, por seguridad) */}
               <div className="mb-5">
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.currentPassLabel}
                 </label>
                 <PasswordInput
@@ -1085,7 +1085,7 @@ function CuentaPrivada({
 
               {/* Nueva contraseña */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.cuenta.newPassLabel}
                 </label>
                 <PasswordInput
@@ -1101,7 +1101,7 @@ function CuentaPrivada({
               </div>
 
               {cambioPassMsg && (
-                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500 mt-3">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-red-500 mt-3">
                   {cambioPassMsg}
                 </p>
               )}
@@ -1110,13 +1110,13 @@ function CuentaPrivada({
                 <button
                   type="submit"
                   disabled={cambiandoPass}
-                  className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+                  className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
                 >
                   <span>{cambiandoPass ? t.cuenta.saving : t.cuenta.newPassBtn}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
                 {cambioPassOk && (
-                  <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                  <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-brand-blue">
                     <CheckCircle className="w-4 h-4 shrink-0" />
                     {t.cuenta.passUpdated}
                   </span>
@@ -1126,14 +1126,14 @@ function CuentaPrivada({
 
             {/* ¿No recuerdas tu contraseña actual? → enlace por correo */}
             <div className="mt-10 pt-6 border-t border-brand-gray-200">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-3">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-3">
                 {t.cuenta.forgotInsideQ}
               </p>
               {resetEnviado ? (
                 <motion.p
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-start gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue leading-relaxed"
+                  className="flex items-start gap-2 font-mono text-[11px] uppercase tracking-widest text-brand-blue leading-relaxed"
                 >
                   <CheckCircle className="w-4 h-4 shrink-0" />
                   {t.cuenta.forgotInsideSent}
@@ -1143,7 +1143,7 @@ function CuentaPrivada({
                   type="button"
                   onClick={handleOlvideActual}
                   disabled={enviandoReset}
-                  className="font-mono text-[9px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors disabled:opacity-60"
+                  className="font-mono text-[11px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors disabled:opacity-60"
                 >
                   {enviandoReset ? t.cuenta.processing : t.cuenta.forgotInsideBtn}
                 </button>
@@ -1155,7 +1155,7 @@ function CuentaPrivada({
         {/* ══ PESTAÑA: PREFERENCIAS (correos de novedades) ══ */}
         {tab === 'prefs' && (
           <form onSubmit={handleSavePrefs} className="max-w-xl">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-6">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-6">
               {t.cuenta.prefsNote}
             </p>
             <label className="flex items-start gap-3 cursor-pointer border border-brand-gray-200 p-5">
@@ -1168,7 +1168,7 @@ function CuentaPrivada({
                 }}
                 className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-brand-blue,#002395)]"
               />
-              <span className="font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+              <span className="font-mono text-[12px] uppercase tracking-widest leading-relaxed">
                 {t.cuenta.marketingLabel}
               </span>
             </label>
@@ -1177,13 +1177,13 @@ function CuentaPrivada({
               <button
                 type="submit"
                 disabled={savingPrefs}
-                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
+                className="flex items-center gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 group"
               >
                 <span>{savingPrefs ? t.cuenta.saving : t.cuenta.saveProfile}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               {savedPrefs && (
-                <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-brand-blue">
                   <CheckCircle className="w-4 h-4 shrink-0" />
                   {t.cuenta.prefsSaved}
                 </span>

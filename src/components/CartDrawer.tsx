@@ -33,7 +33,7 @@ export default function CartDrawer() {
           >
             {/* Encabezado */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-brand-gray-200">
-              <h2 className="font-mono text-[11px] uppercase tracking-widest font-bold">
+              <h2 className="font-mono text-[13px] uppercase tracking-widest font-bold">
                 {t.cart.title} ({count})
               </h2>
               <button
@@ -48,7 +48,7 @@ export default function CartDrawer() {
             {items.length === 0 ? (
               /* Carrito vacío */
               <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+                <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
                   {t.cart.empty}
                 </p>
                 <button
@@ -56,7 +56,7 @@ export default function CartDrawer() {
                     close();
                     navigate('/tienda');
                   }}
-                  className="font-mono text-[10px] uppercase tracking-widest border border-brand-gray-300 px-6 py-3 hover:border-brand-black transition-colors"
+                  className="font-mono text-[12px] uppercase tracking-widest border border-brand-gray-300 px-6 py-3 hover:border-brand-black transition-colors"
                 >
                   {t.cart.continueShopping}
                 </button>
@@ -82,7 +82,7 @@ export default function CartDrawer() {
                             <h3 className="font-extrabold tracking-tighter text-lg leading-none">
                               {item.name}
                             </h3>
-                            <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mt-1">
+                            <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mt-1">
                               {item.code} · {item.size}
                             </p>
                           </div>
@@ -113,7 +113,7 @@ export default function CartDrawer() {
                               <Plus className="w-3 h-3" />
                             </button>
                           </div>
-                          <span className="font-mono text-[11px] tracking-widest">
+                          <span className="font-mono text-[13px] tracking-widest">
                             {formatMXN(item.priceMXN * item.qty)}
                           </span>
                         </div>
@@ -125,14 +125,14 @@ export default function CartDrawer() {
                 {/* Pie: subtotal + pagar */}
                 <div className="border-t border-brand-gray-200 px-6 py-5 flex flex-col gap-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+                    <span className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
                       {t.cart.subtotal}
                     </span>
                     <span className="font-mono text-sm font-bold tracking-widest">
                       {formatMXN(subtotalMXN)}
                     </span>
                   </div>
-                  <p className="font-mono text-[8px] uppercase tracking-widest text-brand-gray-400 text-center">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 text-center">
                     {t.cart.freeShippingNote}
                   </p>
                   <button
@@ -140,14 +140,14 @@ export default function CartDrawer() {
                       close();
                       navigate('/checkout');
                     }}
-                    className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-6 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
+                    className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-6 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
                   >
                     <span>{t.cart.checkout}</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                   <button
                     onClick={close}
-                    className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+                    className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
                   >
                     {t.cart.continueShopping}
                   </button>

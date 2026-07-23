@@ -31,7 +31,7 @@ export default function Mocca() {
       <div className="min-h-screen bg-brand-white">
         <Header />
         <main className="max-w-[1200px] mx-auto px-8 py-24 text-center">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
             {loading ? t.common.loading : t.mocca.notFound}
           </p>
         </main>
@@ -53,7 +53,7 @@ export default function Mocca() {
       <div className="max-w-[1440px] mx-auto px-8 py-4 border-b border-brand-gray-200">
         <button
           onClick={() => navigate('/tienda')}
-          className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+          className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
         >
           <ArrowLeft className="w-3 h-3" />
           {t.mocca.breadcrumb}
@@ -77,10 +77,10 @@ export default function Mocca() {
           >
             {/* Mini barra superior del marco */}
             <div className="flex justify-between items-center border border-b-0 border-brand-gray-200 px-4 py-2.5">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                 {product.num}
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                 {t.mocca.serie}
               </span>
             </div>
@@ -92,10 +92,10 @@ export default function Mocca() {
 
             {/* Mini barra inferior con datos técnicos */}
             <div className="flex justify-between items-center border border-t-0 border-brand-gray-200 px-4 py-2.5">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                 {t.mocca.format}
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-brand-black font-bold">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-black font-bold">
                 {t.mocca.serieYear}
               </span>
             </div>
@@ -110,7 +110,7 @@ export default function Mocca() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-3">
+                <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-3">
                   {t.mocca.subtitle}
                 </p>
                 <h1 className="text-6xl md:text-7xl font-extrabold tracking-tighter leading-[0.85] mb-6">
@@ -131,7 +131,7 @@ export default function Mocca() {
                 transition={{ delay: 0.2 }}
                 className="mb-10"
               >
-                <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-4">
+                <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-4">
                   {t.mocca.selectFormat}
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -139,14 +139,14 @@ export default function Mocca() {
                     <button
                       key={f.id}
                       onClick={() => setSelectedFormat(f.id)}
-                      className={`font-mono text-[10px] uppercase tracking-widest px-5 py-3 border transition-colors ${
+                      className={`font-mono text-[12px] uppercase tracking-widest px-5 py-3 border transition-colors ${
                         selectedFormat === f.id
                           ? 'bg-brand-black text-brand-white border-brand-black'
                           : 'border-brand-gray-300 text-brand-gray-400 hover:border-brand-black hover:text-brand-black'
                       }`}
                     >
                       {f.label}
-                      <span className="block text-[8px] mt-0.5 opacity-70">{f.size}</span>
+                      <span className="block text-[10px] mt-0.5 opacity-70">{f.size}</span>
                     </button>
                   ))}
                 </div>
@@ -159,7 +159,7 @@ export default function Mocca() {
                 transition={{ delay: 0.3 }}
                 className="mb-10"
               >
-                <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-4">
+                <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-4">
                   {t.mocca.quantity}
                 </p>
                 <div className="flex items-center gap-0 border border-brand-gray-300 w-fit">
@@ -186,7 +186,7 @@ export default function Mocca() {
                 transition={{ delay: 0.35 }}
                 className="mb-10"
               >
-                <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.mocca.price}
                 </p>
                 <p className="text-3xl font-extrabold tracking-tighter">
@@ -205,14 +205,14 @@ export default function Mocca() {
               {/* Botón principal — agregar al carrito */}
               <button
                 onClick={handleAdd}
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-5 hover:bg-brand-black hover:text-brand-white transition-colors group"
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-5 hover:bg-brand-black hover:text-brand-white transition-colors group"
               >
                 <span>{t.cart.addToCart}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               {/* Nota bajo el botón */}
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
                 {t.cart.freeShippingNote}
               </p>
 
@@ -222,7 +222,7 @@ export default function Mocca() {
               {/* Volver al catálogo */}
               <button
                 onClick={() => navigate('/tienda')}
-                className="flex items-center justify-center gap-2 border border-brand-gray-300 font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:border-brand-black transition-colors"
+                className="flex items-center justify-center gap-2 border border-brand-gray-300 font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:border-brand-black transition-colors"
               >
                 <ArrowLeft className="w-3 h-3" />
                 {t.mocca.moreScents}
@@ -233,7 +233,7 @@ export default function Mocca() {
       </motion.div>
 
       <footer className="border-t border-brand-gray-200 px-8 py-6 mt-8 bg-brand-white">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
           {t.common.copyright}
         </p>
       </footer>

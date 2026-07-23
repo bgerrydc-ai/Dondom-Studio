@@ -19,7 +19,7 @@ function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) 
   return (
     <section className="mb-10">
       <h2 className="text-xl font-extrabold tracking-tighter mb-3">{titulo}</h2>
-      <div className="font-mono text-[11px] leading-relaxed text-brand-gray-400 space-y-3">
+      <div className="font-mono text-[13px] leading-relaxed text-brand-gray-400 space-y-3">
         {children}
       </div>
     </section>
@@ -38,7 +38,7 @@ export default function Privacidad() {
       <main className="max-w-[760px] mx-auto px-8 py-16">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors mb-10"
+          className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors mb-10"
         >
           <ArrowLeft className="w-3 h-3" />
           {t.legal.backHome}
@@ -47,7 +47,7 @@ export default function Privacidad() {
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-2">
           {t.legal.privacy}
         </h1>
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-12 border-b border-brand-gray-200 pb-6">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-12 border-b border-brand-gray-200 pb-6">
           {t.legal.updated}: {ULTIMA_ACTUALIZACION}
         </p>
 
@@ -135,7 +135,7 @@ export default function Privacidad() {
           </p>
         </Seccion>
 
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 border-t border-brand-gray-200 pt-6">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 border-t border-brand-gray-200 pt-6">
           Documento base de plantilla — sujeto a revisión.
         </p>
       </main>

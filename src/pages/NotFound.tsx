@@ -20,12 +20,12 @@ export default function NotFound() {
         <h2 className="text-2xl md:text-3xl font-extrabold tracking-tighter">
           {t.notFound.title}
         </h2>
-        <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+        <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
           {t.notFound.text}
         </p>
         <button
           onClick={() => navigate('/')}
-          className="mt-2 flex items-center gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
+          className="mt-2 flex items-center gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors group"
         >
           <span>{t.notFound.back}</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

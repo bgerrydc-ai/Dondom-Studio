@@ -14,7 +14,7 @@ export default function QuienesSomos() {
       <main>
         {/* ── HERO de sección: Quiénes Somos ── */}
         <section className="max-w-[1440px] mx-auto px-8 md:px-16 py-16 border-b border-brand-gray-200">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-4">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-4">
             {t.about.kicker}
           </p>
           <motion.h1
@@ -30,7 +30,7 @@ export default function QuienesSomos() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-2xl"
+            className="font-mono text-[13px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-2xl"
           >
             {t.about.intro}
           </motion.p>
@@ -43,7 +43,7 @@ export default function QuienesSomos() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 block mb-6">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 block mb-6">
               {t.about.philosophyLabel}
             </span>
             <blockquote className="text-3xl md:text-5xl font-extrabold tracking-tighter leading-tight max-w-4xl text-brand-blue">
@@ -51,7 +51,7 @@ export default function QuienesSomos() {
               <br />
               {t.about.philosophyQuoteL2}
             </blockquote>
-            <p className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-xl mt-8">
+            <p className="font-mono text-[13px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-xl mt-8">
               {t.about.philosophySub}
             </p>
           </motion.div>
@@ -66,17 +66,17 @@ export default function QuienesSomos() {
             viewport={{ once: true }}
             className="flex-1 px-8 md:px-16 py-16 border-b lg:border-b-0 lg:border-r border-brand-gray-200"
           >
-            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 block mb-6">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 block mb-6">
               {t.about.missionLabel}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter mb-8 leading-tight">
               {t.about.missionTitle}
             </h2>
             <div className="space-y-6">
-              <p className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+              <p className="font-mono text-[13px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
                 {t.about.mission1}
               </p>
-              <p className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+              <p className="font-mono text-[13px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
                 {t.about.mission2}
               </p>
             </div>
@@ -90,13 +90,13 @@ export default function QuienesSomos() {
             transition={{ delay: 0.1 }}
             className="flex-1 px-8 md:px-16 py-16 bg-brand-gray-100"
           >
-            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 block mb-6">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 block mb-6">
               {t.about.visionLabel}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter mb-8 leading-tight">
               {t.about.visionTitle}
             </h2>
-            <p className="font-mono text-[11px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
+            <p className="font-mono text-[13px] uppercase tracking-widest leading-relaxed text-brand-gray-400">
               {t.about.vision}
             </p>
           </motion.div>
@@ -111,14 +111,14 @@ export default function QuienesSomos() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto text-center"
           >
-            <span className="font-mono text-[9px] uppercase tracking-widest text-neutral-400 block mb-10">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 block mb-10">
               {t.about.phraseLabel}
             </span>
             <p className="text-2xl md:text-4xl font-extrabold tracking-tighter leading-tight">
               {t.about.phrase}
             </p>
             <div className="mt-12 pt-8 border-t border-neutral-400/20 inline-block">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
+              <span className="font-mono text-[12px] uppercase tracking-widest text-neutral-400">
                 {t.about.location}
               </span>
             </div>
@@ -127,7 +127,7 @@ export default function QuienesSomos() {
       </main>
 
       <footer className="border-t border-brand-gray-200 px-8 py-6">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
           {t.about.copyright}
         </p>
       </footer>

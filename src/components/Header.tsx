@@ -56,7 +56,7 @@ export default function Header() {
                 to={link.to}
                 end={link.to === '/'}
                 className={({ isActive }) =>
-                  `font-mono text-[11px] uppercase tracking-widest pb-0.5 transition-colors ${
+                  `font-mono text-[13px] uppercase tracking-widest pb-0.5 transition-colors ${
                     isActive
                       ? 'text-brand-blue border-b border-brand-blue'
                       : 'text-brand-gray-400 hover:text-brand-black'
@@ -93,7 +93,7 @@ export default function Header() {
           >
             <ShoppingBag className="w-5 h-5" />
             {count > 0 && (
-              <span className="absolute -top-1 -right-1 bg-brand-blue text-white text-[9px] font-bold rounded-full min-w-[17px] h-[17px] px-1 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-brand-blue text-white text-[10px] font-bold rounded-full min-w-[19px] h-[19px] px-1 flex items-center justify-center">
                 {count}
               </span>
             )}
@@ -103,7 +103,7 @@ export default function Header() {
           <button
             onClick={toggle}
             aria-label="Cambiar idioma / Change language"
-            className="font-mono text-[11px] tracking-widest border border-brand-gray-300 px-3 py-2 hover:border-brand-blue transition-colors"
+            className="font-mono text-[13px] tracking-widest border border-brand-gray-300 px-3 py-2 hover:border-brand-blue transition-colors"
           >
             <span className={lang === 'es' ? 'text-brand-blue font-bold' : 'text-brand-gray-400'}>
               ES
@@ -144,7 +144,7 @@ export default function Header() {
               end={link.to === '/'}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `font-mono text-[10px] uppercase tracking-widest transition-colors ${
+                `font-mono text-[12px] uppercase tracking-widest transition-colors ${
                   isActive ? 'text-brand-blue' : 'text-brand-gray-400'
                 }`
               }

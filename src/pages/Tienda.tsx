@@ -41,14 +41,14 @@ export default function Tienda() {
         {/* Encabezado de sección */}
         <div className="mb-14 border-b border-brand-black pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-2">
+            <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-2">
               {t.tienda.catalog}
             </p>
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter">
               {t.tienda.title}
             </h1>
           </div>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
             {disponibles} {disponibles === 1 ? t.tienda.availableSg : t.tienda.availablePl}
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function Tienda() {
             <button
               key={f.id}
               onClick={() => setFiltro(f.id)}
-              className={`font-mono text-[10px] uppercase tracking-widest px-5 py-2.5 border transition-colors ${
+              className={`font-mono text-[12px] uppercase tracking-widest px-5 py-2.5 border transition-colors ${
                 filtro === f.id
                   ? 'bg-brand-black text-brand-white border-brand-black'
                   : 'border-brand-gray-300 text-brand-gray-400 hover:border-brand-black hover:text-brand-black'
@@ -73,7 +73,7 @@ export default function Tienda() {
         {/* Grid de productos */}
         {productosFiltrados.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+            <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
               {t.tienda.empty}
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function Tienda() {
               >
                 {/* Imagen / placeholder */}
                 <div className="aspect-[4/5] bg-brand-gray-100 border border-brand-gray-200 relative flex items-center justify-center mb-5 overflow-hidden">
-                  <span className="absolute top-4 left-4 z-10 font-mono text-[9px] uppercase tracking-widest text-neutral-400">
+                  <span className="absolute top-4 left-4 z-10 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
                     {product.num}
                   </span>
 
@@ -105,7 +105,7 @@ export default function Tienda() {
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-3 opacity-25">
                       <div className="w-16 h-16 border-2 border-brand-black rounded-full" />
-                      <span className="font-mono text-[8px] uppercase tracking-widest">
+                      <span className="font-mono text-[10px] uppercase tracking-widest">
                         {product.available ? t.common.photoSoon : t.common.comingSoon}
                       </span>
                     </div>
@@ -114,7 +114,7 @@ export default function Tienda() {
                   {/* Badge "próximamente" */}
                   {!product.available && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="font-mono text-[9px] uppercase tracking-widest border border-brand-gray-400 px-4 py-2 text-brand-gray-400 bg-brand-white/80">
+                      <span className="font-mono text-[11px] uppercase tracking-widest border border-brand-gray-400 px-4 py-2 text-brand-gray-400 bg-brand-white/80">
                         {t.common.comingSoon}
                       </span>
                     </div>
@@ -136,19 +136,19 @@ export default function Tienda() {
                     <h3 className="text-xl font-extrabold tracking-tighter group-hover:text-brand-blue transition-colors">
                       {product.available ? product.name : t.common.comingSoonName}
                     </h3>
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mt-1">
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mt-1">
                       {product.code} — {product.series}
                     </p>
                   </div>
                   {product.available && (
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 group-hover:text-brand-blue border-b border-transparent group-hover:border-brand-blue transition-all">
+                    <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 group-hover:text-brand-blue border-b border-transparent group-hover:border-brand-blue transition-all">
                       {t.common.view}
                     </span>
                   )}
                 </div>
 
                 {/* Descripción breve */}
-                <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mt-2 leading-relaxed">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mt-2 leading-relaxed">
                   {descripcion(product.slug)}
                 </p>
               </motion.div>
@@ -159,7 +159,7 @@ export default function Tienda() {
 
       {/* Footer mínimo */}
       <footer className="border-t border-brand-gray-200 px-8 py-6 mt-16">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
           {t.common.copyright}
         </p>
       </footer>

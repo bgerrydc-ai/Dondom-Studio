@@ -103,7 +103,7 @@ export default function Contacto() {
   };
 
   const inputBase =
-    'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[11px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
+    'w-full border border-brand-gray-300 px-4 py-3 font-mono text-[13px] uppercase tracking-widest placeholder:text-brand-gray-400 focus:outline-none focus:border-brand-blue transition-colors bg-brand-white';
 
   return (
     <div className="min-h-screen bg-brand-white">
@@ -113,7 +113,7 @@ export default function Contacto() {
 
         {/* Encabezado */}
         <div className="mb-14 border-b border-brand-black pb-8">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 mb-2">
+          <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 mb-2">
             {t.contacto.kicker}
           </p>
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter">
@@ -133,7 +133,7 @@ export default function Contacto() {
             >
               {/* Nombre */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.contacto.name}
                 </label>
                 <input
@@ -149,7 +149,7 @@ export default function Contacto() {
 
               {/* Teléfono (opcional) */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.contacto.phone}
                 </label>
                 <input
@@ -164,7 +164,7 @@ export default function Contacto() {
 
               {/* Comentario */}
               <div>
-                <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.contacto.comment}
                 </label>
                 <textarea
@@ -180,7 +180,7 @@ export default function Contacto() {
 
               {/* Error */}
               {errMsg && (
-                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-red-500">
                   {errMsg}
                 </p>
               )}
@@ -189,14 +189,14 @@ export default function Contacto() {
               <button
                 type="submit"
                 disabled={sending}
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
                 <span>{sending ? t.contacto.sending : t.contacto.send}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               {/* Aviso de cómo funciona */}
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 flex items-center gap-2">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 flex items-center gap-2">
                 <Mail className="w-3 h-3 shrink-0" />
                 {t.contacto.mailNotice}
               </p>
@@ -208,7 +208,7 @@ export default function Contacto() {
                   animate={{ opacity: 1, y: 0 }}
                   className="border border-brand-blue p-5 flex flex-col gap-4"
                 >
-                  <p className="font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-brand-blue">
                     {t.contacto.sent}
                   </p>
                   <button
@@ -217,7 +217,7 @@ export default function Contacto() {
                       setSent(false);
                       setForm(EMPTY);
                     }}
-                    className="self-start font-mono text-[9px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors"
+                    className="self-start font-mono text-[11px] uppercase tracking-widest border border-brand-gray-300 px-4 py-2.5 hover:border-brand-blue hover:text-brand-blue transition-colors"
                   >
                     {t.contacto.sendAnother}
                   </button>
@@ -231,10 +231,10 @@ export default function Contacto() {
                   animate={{ opacity: 1, y: 0 }}
                   className="border border-brand-blue p-5 flex flex-col gap-4"
                 >
-                  <p className="font-mono text-[9px] uppercase tracking-widest text-brand-blue">
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-brand-blue">
                     {t.contacto.done}
                   </p>
-                  <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                     {t.contacto.notOpened}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -242,19 +242,19 @@ export default function Contacto() {
                       href={gmailUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center border border-brand-gray-300 font-mono text-[9px] uppercase tracking-widest px-4 py-3 hover:border-brand-blue hover:text-brand-blue transition-colors"
+                      className="flex-1 text-center border border-brand-gray-300 font-mono text-[11px] uppercase tracking-widest px-4 py-3 hover:border-brand-blue hover:text-brand-blue transition-colors"
                     >
                       {t.contacto.openGmail}
                     </a>
                     <button
                       type="button"
                       onClick={handleCopy}
-                      className="flex-1 text-center border border-brand-gray-300 font-mono text-[9px] uppercase tracking-widest px-4 py-3 hover:border-brand-blue hover:text-brand-blue transition-colors"
+                      className="flex-1 text-center border border-brand-gray-300 font-mono text-[11px] uppercase tracking-widest px-4 py-3 hover:border-brand-blue hover:text-brand-blue transition-colors"
                     >
                       {copied ? t.contacto.copied : t.contacto.copyMsg}
                     </button>
                   </div>
-                  <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                     {t.contacto.orWrite} {CONTACT.email}
                   </p>
                 </motion.div>
@@ -270,45 +270,45 @@ export default function Contacto() {
             className="lg:w-72 flex flex-col gap-10"
           >
             <div>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
                 {t.contacto.whatsapp}
               </p>
               <a
                 href={`https://wa.me/${CONTACT.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-[10px] uppercase tracking-widest hover:text-brand-blue transition-colors"
+                className="font-mono text-[12px] uppercase tracking-widest hover:text-brand-blue transition-colors"
               >
                 {CONTACT.phone}
               </a>
             </div>
 
             <div>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
                 {t.contacto.email}
               </p>
               <a
                 href={`mailto:${CONTACT.email}`}
-                className="font-mono text-[10px] uppercase tracking-widest hover:text-brand-blue transition-colors break-all"
+                className="font-mono text-[12px] uppercase tracking-widest hover:text-brand-blue transition-colors break-all"
               >
                 {CONTACT.email}
               </a>
             </div>
 
             <div>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-3 border-b border-brand-gray-200 pb-2">
                 {t.contacto.hours}
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-widest">
+              <p className="font-mono text-[12px] uppercase tracking-widest">
                 {t.contacto.hoursValue}
               </p>
             </div>
 
             <div className="bg-brand-gray-100 border border-brand-gray-200 p-6">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-2">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-2">
                 {t.contacto.supplierQ}
               </p>
-              <p className="font-mono text-[9px] uppercase tracking-widest leading-relaxed">
+              <p className="font-mono text-[11px] uppercase tracking-widest leading-relaxed">
                 {t.contacto.supplierText.replace('{phone}', CONTACT.phone)}
               </p>
             </div>
@@ -317,7 +317,7 @@ export default function Contacto() {
       </main>
 
       <footer className="border-t border-brand-gray-200 px-8 py-6 mt-16">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
           {t.contacto.copyright}
         </p>
       </footer>

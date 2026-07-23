@@ -56,7 +56,7 @@ function Field({
 }: FieldProps) {
   return (
     <div className={full ? 'sm:col-span-2' : ''}>
-      <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+      <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
         {label}
       </label>
       <input
@@ -261,7 +261,7 @@ export default function Checkout() {
             </h1>
             {orderId && orderId !== 'ok' && (
               <div className="border border-brand-gray-200 px-6 py-4">
-                <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                   {t.checkout.orderNum}
                 </p>
                 <p className="font-mono text-lg font-bold tracking-widest uppercase">
@@ -269,13 +269,13 @@ export default function Checkout() {
                 </p>
               </div>
             )}
-            <p className="font-mono text-[10px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-sm">
+            <p className="font-mono text-[12px] uppercase tracking-widest leading-relaxed text-brand-gray-400 max-w-sm">
               {t.checkout.paidNote}
             </p>
 
             <button
               onClick={() => navigate('/')}
-              className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
+              className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-black transition-colors"
             >
               {t.checkout.backHome}
             </button>
@@ -296,12 +296,12 @@ export default function Checkout() {
 
         {items.length === 0 ? (
           <div className="flex flex-col items-start gap-5">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+            <p className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
               {t.checkout.empty}
             </p>
             <button
               onClick={() => navigate('/tienda')}
-              className="font-mono text-[10px] uppercase tracking-widest border border-brand-gray-300 px-6 py-3 hover:border-brand-black transition-colors"
+              className="font-mono text-[12px] uppercase tracking-widest border border-brand-gray-300 px-6 py-3 hover:border-brand-black transition-colors"
             >
               {t.checkout.goShop}
             </button>
@@ -317,7 +317,7 @@ export default function Checkout() {
             >
               {/* Sección 1: contacto */}
               <div>
-                <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+                <h2 className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
                   {t.checkout.contactSection}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -330,7 +330,7 @@ export default function Checkout() {
 
               {/* Sección 2: dirección */}
               <div>
-                <h2 className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
+                <h2 className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400 border-b border-brand-gray-200 pb-3 mb-5">
                   {t.checkout.addressSection}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -340,7 +340,7 @@ export default function Checkout() {
                   <div>
                     <Field label={t.checkout.zip} name="cp" value={form.cp} onChange={handleChange} required inputMode="numeric" maxLength={5} />
                     {cpAuto && (
-                      <p className="font-mono text-[8px] uppercase tracking-widest text-brand-blue mt-1">
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-brand-blue mt-1">
                         {t.checkout.cpAutoNote}
                       </p>
                     )}
@@ -352,7 +352,7 @@ export default function Checkout() {
 
                   {/* Notas de entrega (casilla grande) */}
                   <div className="sm:col-span-2">
-                    <label className="block font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mb-1">
+                    <label className="block font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mb-1">
                       {t.checkout.notes}
                     </label>
                     <textarea
@@ -368,7 +368,7 @@ export default function Checkout() {
               </div>
 
               {errMsg && (
-                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-red-500">
                   {errMsg}
                 </p>
               )}
@@ -376,14 +376,14 @@ export default function Checkout() {
               <button
                 type="submit"
                 disabled={placing}
-                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[10px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
+                className="flex items-center justify-between gap-3 bg-brand-blue text-white font-mono text-[12px] uppercase tracking-widest px-8 py-4 hover:bg-brand-black hover:text-brand-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed group"
               >
                 <span>{placing ? t.checkout.redirecting : t.checkout.payButton}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               {/* Aviso de pago seguro */}
-              <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 text-center">
                 {t.checkout.securePay}
               </p>
             </motion.form>
@@ -396,7 +396,7 @@ export default function Checkout() {
               className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-24"
             >
               <div className="border border-brand-gray-200">
-                <div className="px-5 py-3 border-b border-brand-gray-200 font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+                <div className="px-5 py-3 border-b border-brand-gray-200 font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
                   {t.checkout.summary}
                 </div>
                 <div className="divide-y divide-brand-gray-200">
@@ -409,18 +409,18 @@ export default function Checkout() {
                       </div>
                       <div className="flex-1">
                         <p className="font-extrabold tracking-tighter">{i.name}</p>
-                        <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 mt-1">
+                        <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 mt-1">
                           {i.code} · {i.size} · x{i.qty}
                         </p>
                       </div>
-                      <span className="font-mono text-[11px] tracking-widest">
+                      <span className="font-mono text-[13px] tracking-widest">
                         {formatMXN(i.priceMXN * i.qty)}
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between px-5 py-4 border-t border-brand-gray-200">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+                  <span className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
                     {t.checkout.subtotal}
                   </span>
                   <span className="font-mono text-sm font-bold tracking-widest">

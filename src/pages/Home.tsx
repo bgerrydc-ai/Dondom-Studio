@@ -46,15 +46,15 @@ export default function Home() {
                 className="flex space-x-12 mb-20"
               >
                 <motion.div variants={itemVariants} className="max-w-[150px]">
-                  <h3 className="font-bold text-[10px] tracking-widest uppercase mb-3 border-b border-brand-gray-200 pb-1">
+                  <h3 className="font-bold text-[12px] tracking-widest uppercase mb-3 border-b border-brand-gray-200 pb-1">
                     D/STUDIO
                   </h3>
-                  <p className="font-mono text-[9px] text-brand-gray-400 uppercase leading-relaxed">
+                  <p className="font-mono text-[11px] text-brand-gray-400 uppercase leading-relaxed">
                     {t.home.blurb1}
                   </p>
                 </motion.div>
                 <motion.div variants={itemVariants} className="max-w-[200px] mt-4">
-                  <p className="font-mono text-[9px] text-brand-gray-400 uppercase leading-relaxed pt-2">
+                  <p className="font-mono text-[11px] text-brand-gray-400 uppercase leading-relaxed pt-2">
                     {t.home.blurb2}
                   </p>
                 </motion.div>
@@ -100,7 +100,7 @@ export default function Home() {
               <div className="absolute top-12 right-12 z-10 text-right flex flex-col items-end">
                 <span className="font-bold text-xs tracking-widest uppercase">D-STUDIO</span>
                 <div className="flex flex-col items-end mt-6">
-                  <span className="vertical-text rotate-180-vertical font-mono text-[10px] text-brand-gray-400 uppercase tracking-widest">
+                  <span className="vertical-text rotate-180-vertical font-mono text-[12px] text-brand-gray-400 uppercase tracking-widest">
                     {t.home.instruments}
                     <br />
                     {t.home.ofScent}
@@ -137,7 +137,7 @@ export default function Home() {
                 >
                   {t.home.collection}
                 </motion.h2>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-brand-gray-400">
+                <span className="font-mono text-[12px] uppercase tracking-widest text-brand-gray-400">
                   {t.home.catalog}
                 </span>
               </div>
@@ -155,7 +155,7 @@ export default function Home() {
                   {t.home.scents}
                 </h3>
                 <div className="flex-1 h-px bg-brand-gray-200" />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
                   {t.home.segment}
                 </span>
               </motion.div>
@@ -173,7 +173,7 @@ export default function Home() {
                   >
                     {/* Imagen del producto */}
                     <div className="aspect-[4/5] relative overflow-hidden bg-brand-gray-100 border border-brand-gray-200 mb-8 flex items-center justify-center">
-                      <div className="absolute top-6 left-6 z-10 text-[10px] font-mono text-neutral-400 font-bold uppercase tracking-widest">
+                      <div className="absolute top-6 left-6 z-10 text-[12px] font-mono text-neutral-400 font-bold uppercase tracking-widest">
                         {product.num}
                       </div>
 
@@ -181,7 +181,7 @@ export default function Home() {
                       {!product.image ? (
                         <div className="flex flex-col items-center justify-center gap-4 opacity-30">
                           <div className="w-24 h-24 border-2 border-brand-black rounded-full" />
-                          <span className="font-mono text-[9px] uppercase tracking-widest">
+                          <span className="font-mono text-[11px] uppercase tracking-widest">
                             {product.available ? t.common.imageSoon : t.common.comingSoon}
                           </span>
                         </div>
@@ -203,7 +203,7 @@ export default function Home() {
 
                       {!product.available && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="font-mono text-[10px] uppercase tracking-widest border border-brand-gray-400 px-4 py-2 text-brand-gray-400">
+                          <span className="font-mono text-[12px] uppercase tracking-widest border border-brand-gray-400 px-4 py-2 text-brand-gray-400">
                             {t.common.comingSoon}
                           </span>
                         </div>
@@ -216,12 +216,12 @@ export default function Home() {
                         <h4 className="text-2xl font-bold tracking-tighter mb-1 group-hover:text-brand-blue transition-colors">
                           {product.available ? product.name : t.common.comingSoonName}
                         </h4>
-                        <p className="font-mono text-[10px] text-brand-gray-400 uppercase tracking-widest">
+                        <p className="font-mono text-[12px] text-brand-gray-400 uppercase tracking-widest">
                           {product.code} — {product.series}
                         </p>
                       </div>
                       {product.available && (
-                        <span className="font-mono text-[9px] uppercase tracking-widest border-b border-transparent group-hover:border-brand-blue transition-all">
+                        <span className="font-mono text-[11px] uppercase tracking-widest border-b border-transparent group-hover:border-brand-blue transition-all">
                           {t.common.viewProduct}
                         </span>
                       )}
@@ -236,7 +236,7 @@ export default function Home() {
           {/* Esta sección es negra SIEMPRE (colores fijos, no cambian con el modo oscuro) */}
           <section className="bg-black text-white px-8 md:px-24 py-16 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-brand-gray-200">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-3">
+              <p className="font-mono text-[12px] uppercase tracking-widest text-neutral-400 mb-3">
                 {t.home.forCompanies}
               </p>
               <h3 className="text-2xl md:text-3xl font-extrabold tracking-tighter leading-tight">
@@ -246,12 +246,12 @@ export default function Home() {
               </h3>
             </div>
             <div className="flex flex-col items-start md:items-end gap-4">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 max-w-xs text-left md:text-right">
+              <p className="font-mono text-[12px] uppercase tracking-widest text-neutral-400 max-w-xs text-left md:text-right">
                 {t.home.supplierText}
               </p>
               <button
                 onClick={() => navigate('/contacto')}
-                className="inline-flex items-center gap-3 border border-white text-white font-mono text-[10px] uppercase tracking-widest px-6 py-3 hover:bg-white hover:text-black transition-colors"
+                className="inline-flex items-center gap-3 border border-white text-white font-mono text-[12px] uppercase tracking-widest px-6 py-3 hover:bg-white hover:text-black transition-colors"
               >
                 {t.home.supplierCta}
                 <ArrowRight className="w-4 h-4" />
@@ -276,7 +276,7 @@ export default function Home() {
                 whileInView={{ opacity: 1 }}
                 className="relative z-10 bg-brand-white p-4 border border-brand-black"
               >
-                <span className="font-mono text-[10px] uppercase tracking-widest">
+                <span className="font-mono text-[12px] uppercase tracking-widest">
                   {t.home.labTexture}
                 </span>
               </motion.div>
@@ -284,7 +284,7 @@ export default function Home() {
 
             {/* Panel derecho — texto (negro SIEMPRE, colores fijos) */}
             <div className="lg:w-1/2 bg-black text-white p-12 lg:p-24 flex flex-col justify-center relative">
-              <span className="absolute top-12 right-12 font-mono text-[10px] text-neutral-400 tracking-widest">
+              <span className="absolute top-12 right-12 font-mono text-[12px] text-neutral-400 tracking-widest">
                 003
               </span>
               <div className="max-w-md">
@@ -303,7 +303,7 @@ export default function Home() {
                   <p className="text-neutral-400">{t.home.about2}</p>
                 </div>
 
-                <div className="mt-20 pt-8 border-t border-neutral-400/20 flex justify-between items-center text-[10px] font-mono tracking-widest uppercase text-neutral-400">
+                <div className="mt-20 pt-8 border-t border-neutral-400/20 flex justify-between items-center text-[12px] font-mono tracking-widest uppercase text-neutral-400">
                   <span>© 2026 DONDOM STUDIO</span>
                   <a
                     href={`mailto:${CONTACT.email}`}
@@ -319,23 +319,23 @@ export default function Home() {
 
         {/* ── FOOTER ── */}
         <footer className="p-8 border-t border-brand-gray-200 bg-brand-white flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
             {t.home.footerTagline}
           </p>
           <div className="flex items-center gap-5">
             <Link
               to="/terminos"
-              className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+              className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
             >
               {t.legal.terms}
             </Link>
             <Link
               to="/privacidad"
-              className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
+              className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400 hover:text-brand-blue transition-colors"
             >
               {t.legal.privacy}
             </Link>
-            <span className="font-mono text-[9px] uppercase tracking-widest text-brand-gray-400">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-brand-gray-400">
               {CONTACT.phone}
             </span>
           </div>
